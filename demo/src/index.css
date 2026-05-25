@@ -1,0 +1,80 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  color: #1a1a1a;
+  background: #f9fafb;
+}
+
+.page > header { margin-bottom: 2rem; }
+
+h1 { font-size: 1.4rem; margin: 0 0 0.25rem; }
+h2 { font-size: 1rem; font-weight: 600; margin: 0 0 1rem; }
+
+.subtitle { color: #6b7280; margin: 0 0 1rem; font-size: 0.9rem; }
+.subtitle code { font-family: ui-monospace, monospace; background: #f3f4f6; padding: 0.1rem 0.35rem; border-radius: 3px; }
+
+.card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  outline: none;
+}
+input[type="text"]:focus { border-color: #6b7280; }
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+.controls select {
+  padding: 0.2rem 0.4rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+th {
+  text-align: left;
+  padding: 0.4rem 0.6rem;
+  color: #6b7280;
+  font-weight: 500;
+  border-bottom: 1px solid #e5e7eb;
+}
+td { padding: 0.45rem 0.6rem; border-bottom: 1px solid #f3f4f6; }
+td:nth-child(2), td:nth-child(3) { font-family: ui-monospace, monospace; font-size: 0.825rem; }
+td b, td strong { background: #fef9c3; font-weight: inherit; }
+td mark { background: #fef9c3; padding: 0; }
+td span { background: #fef9c3; }
+.empty { color: #9ca3af; font-style: italic; }
+
+.types-card pre {
+  margin: 0;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  color: #1a1a1a;
+}
