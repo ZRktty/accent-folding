@@ -18,6 +18,12 @@ or with pnpm:
 pnpm install accent-folding
 ```
 
+or with bun:
+
+```shell
+bun add accent-folding
+```
+
 or with yarn:
 
 ```shell
