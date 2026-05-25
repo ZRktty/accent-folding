@@ -4,3 +4,4 @@ node_modules
 coverage/
 .mcp.json
 .claude/
+demo/dist/
