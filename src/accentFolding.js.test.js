@@ -24,12 +24,15 @@ describe('AccentFolding', () => {
 			);
 		});
 
-		it('should throw TypeError if wrapTag is not a string', () => {
-			expect(() => accentFolder.highlightMatch('test', 'es', 123)).toThrow(
-				TypeError
+		it('should fall back to "b" for non-string or disallowed wrapTag', () => {
+			expect(accentFolder.highlightMatch('test', 'es', 123)).toBe(
+				't<b>es</b>t'
 			);
-			expect(() => accentFolder.highlightMatch('test', 'es', 123)).toThrow(
-				'wrapTag must be a string'
+			expect(accentFolder.highlightMatch('test', 'es', 'script')).toBe(
+				't<b>es</b>t'
+			);
+			expect(accentFolder.highlightMatch('test', 'es', 'img')).toBe(
+				't<b>es</b>t'
 			);
 		});
 
