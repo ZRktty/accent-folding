@@ -84,7 +84,7 @@ To extend the accent map with new mappings, pass an object with the new mappings
 ```js
 import AccentFolding from 'accent-folding';
 
-const customAccentMap = { 'ö': 'oe', '✝': 't' };
+const customAccentMap = { ö: 'oe', '✝': 't' };
 const accentFolder = new AccentFolding(customAccentMap);
 
 console.log(accentFolder.replace('Föhn')); // Outputs: Foehn
