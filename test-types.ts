@@ -14,7 +14,8 @@ const highlighted: string = af.highlightMatch('López', 'lo');
 const highlightedTagged: string = af.highlightMatch('López', 'lo', 'mark');
 
 // static method
-const entries: Array<[string, string]> = AccentFolding.convertAccentMapToArray(customMap);
+const entries: Array<[string, string]> =
+	AccentFolding.convertAccentMapToArray(customMap);
 
 // AccentMap type is usable for typing custom maps
 const myMap: AccentMap = { ñ: 'n', ü: 'ue' };
@@ -27,4 +28,10 @@ af.replace(42);
 af.highlightMatch('café', 42);
 
 // Silence unused variable warnings
-void afNull, afCustom, replaced, highlighted, highlightedTagged, entries, afMy;
+(void afNull,
+	afCustom,
+	replaced,
+	highlighted,
+	highlightedTagged,
+	entries,
+	afMy);
