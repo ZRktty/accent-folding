@@ -178,6 +178,12 @@ export default function AccentSearch() {
 
 `dangerouslySetInnerHTML` is safe here because `names` is app-controlled data. Never use it with strings from untrusted external input.
 
+A full React + TypeScript demo (Vite, typed `AccentMap`, search highlight, custom map showcase) is available in [`demo/`](demo/). Run it with:
+
+```shell
+cd demo && pnpm dev
+```
+
 ## Requirements
 
 Node.js ≥22
