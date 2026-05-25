@@ -83,6 +83,66 @@ console.log(accentFolder.replace('Föhn')); // Outputs: Foehn
 console.log(accentFolder.replace('✝illa')); // Outputs: tilla
 ```
 
+## Real-World Examples
+
+### Plain JS (browser)
+
+```js
+import AccentFolding from 'accent-folding';
+
+const af = new AccentFolding();
+const names = ['López', 'Müller', 'Björk', 'Ñoño', 'García', 'Renée'];
+
+const input = document.querySelector('#search');
+const list  = document.querySelector('#results');
+
+input.addEventListener('input', () => {
+  const query = input.value.trim();
+  const matches = query
+    ? names.filter(name =>
+        af.replace(name).toLowerCase().includes(af.replace(query).toLowerCase())
+      )
+    : names;
+
+  list.innerHTML = matches
+    .map(name => `<li>${af.highlightMatch(name, query)}</li>`)
+    .join('');
+});
+```
+
+### React
+
+```jsx
+import { useState } from 'react';
+import AccentFolding from 'accent-folding';
+
+const af = new AccentFolding();
+const names = ['López', 'Müller', 'Björk', 'Ñoño', 'García', 'Renée'];
+
+export default function AccentSearch() {
+  const [query, setQuery] = useState('');
+
+  const matches = query
+    ? names.filter(name =>
+        af.replace(name).toLowerCase().includes(af.replace(query).toLowerCase())
+      )
+    : names;
+
+  return (
+    <div>
+      <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search..." />
+      <ul>
+        {matches.map(name => (
+          <li key={name} dangerouslySetInnerHTML={{ __html: af.highlightMatch(name, query) }} />
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+`dangerouslySetInnerHTML` is safe here because the strings come from your own data, not user-generated HTML.
+
 ## Requirements
 
 Node.js ≥22
