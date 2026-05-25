@@ -27,14 +27,13 @@
     "semantic-release": "semantic-release",
     "test": "vitest",
     "type-check": "tsc",
-    "attw": "attw --pack .",
+    "attw": "pnpm dlx @arethetypeswrong/cli --pack .",
     "docs": "pnpm dlx serve docs",
     "prepare": "husky",
     "publint": "publint",
     "size": "size-limit"
   },
   "lint-staged": {
-    "*.{js,ts,tsx,json,html,css,md}": "prettier --write",
     "*.{js,ts,tsx}": "eslint --fix"
   },
   "repository": {
