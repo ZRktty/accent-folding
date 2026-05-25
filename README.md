@@ -216,4 +216,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Credits
 
-The initial idea came from the article [Accent Folding for Auto-Complete](https://alistapart.com/article/accent-folding-for-auto-complete/) by John Nunemaker on A List Apart. This library has since grown beyond that original concept, but the credit belongs there.
+The initial idea came from the article [Accent Folding for Auto-Complete](https://alistapart.com/article/accent-folding-for-auto-complete/) by Carlos Bueno on A List Apart (February 2010). This library has since grown beyond that original concept, but the credit belongs there.
