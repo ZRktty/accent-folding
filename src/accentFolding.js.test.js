@@ -119,6 +119,15 @@ describe('AccentFolding', () => {
 			expect(accentFolder.replace('hello world')).toBe('hello world');
 		});
 
+		it('should not lowercase plain uppercase ASCII letters', () => {
+			// Regression: H, I, J, N, P, S, T, W, Y were accidentally in the accent
+			// map and got silently lowercased (e.g. replace('NORWAY') → 'nORwAy')
+			expect(accentFolder.replace('NORWAY')).toBe('NORWAY');
+			expect(accentFolder.replace('PARIS')).toBe('PARIS');
+			expect(accentFolder.replace('John')).toBe('John');
+			expect(accentFolder.replace('HIJNTPSWJ')).toBe('HIJNTPSWJ');
+		});
+
 		it('should handle empty string', () => {
 			expect(accentFolder.replace('')).toBe('');
 		});
