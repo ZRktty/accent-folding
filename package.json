@@ -4,7 +4,7 @@
   "description": "A JavaScript library for accent-insensitive text processing, including accent folding and search term highlighting",
   "main": "index.js",
   "engines": {
-    "node": ">=14.17.0"
+    "node": ">=22"
   },
   "type": "module",
   "scripts": {
