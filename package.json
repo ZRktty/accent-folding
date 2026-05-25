@@ -1,7 +1,7 @@
 {
   "name": "accent-folding",
   "version": "2.2.0",
-  "description": "A JavaScript library for accent-insensitive text processing, including accent folding and search term highlighting",
+  "description": "Accent-insensitive text matching with built-in search highlighting — the only library that returns original accented text with HTML markup around matches",
   "main": "index.js",
   "engines": {
     "node": ">=22"
@@ -17,26 +17,33 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zr87/accent-folding.git"
+    "url": "git+https://github.com/ZRktty/accent-folding.git"
   },
   "keywords": [
     "accent folding",
     "accent insensitive",
-    "Unicode normalization",
-    "text processing",
-    "string manipulation",
+    "accent insensitive search",
+    "accent search",
+    "accent removal",
+    "diacritics",
+    "diacritic highlight",
+    "highlight match",
     "search highlight",
-    "JavaScript library",
-    "npm package",
+    "search input",
+    "autocomplete",
+    "typeahead",
+    "fuzzy search display",
+    "Unicode normalization",
     "text normalization",
-    "accent removal"
+    "text processing",
+    "string manipulation"
   ],
-  "author": "Zoltan Rakottyai <zoltanrakottyai@pm.me>",
+  "author": "Zoltan Rakottyai <zoltan@zrktty.dev>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zr87/accent-folding/issues"
+    "url": "https://github.com/ZRktty/accent-folding/issues"
   },
-  "homepage": "https://github.com/zr87/accent-folding#readme",
+  "homepage": "https://github.com/ZRktty/accent-folding#readme",
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@vitest/coverage-v8": "^2.0.5",

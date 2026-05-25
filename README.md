@@ -1,9 +1,10 @@
-# accent-folding ![GitHub package.json version](https://img.shields.io/github/package-json/v/zr87/accent-folding) [![Coverage Status](https://coveralls.io/repos/github/zr87/accent-folding/badge.svg?branch=main)](https://coveralls.io/github/zr87/accent-folding?branch=main)
+# accent-folding [![npm version](https://img.shields.io/npm/v/accent-folding)](https://www.npmjs.com/package/accent-folding) [![npm downloads](https://img.shields.io/npm/dw/accent-folding)](https://www.npmjs.com/package/accent-folding) ![GitHub package.json version](https://img.shields.io/github/package-json/v/ZRktty/accent-folding) [![Coverage Status](https://coveralls.io/repos/github/ZRktty/accent-folding/badge.svg?branch=main)](https://coveralls.io/github/ZRktty/accent-folding?branch=main)
 
-## Description
+**[Live demo →](https://zrktty.github.io/accent-folding/)**
 
-A case-insensitive accent folding functions to replace accented characters with their unaccented equivalents
-or hightlight matched terms in a string, ignoring accents.
+Searching "cafe" should find "café". Highlighting "lo" in "López" should show `<b>Ló</b>pez` — not stripped text.
+
+`accent-folding` is the only library that solves both: accent-insensitive matching that returns the **original accented string** with HTML markup around matches. Zero dependencies. 2.7 kB gzipped.
 
 ## Installation
 
@@ -19,7 +20,13 @@ or with pnpm:
 pnpm install accent-folding
 ```
 
-or even with yarn:
+or with bun:
+
+```shell
+bun add accent-folding
+```
+
+or with yarn:
 
 ```shell
 yarn add accent-folding
@@ -27,11 +34,33 @@ yarn add accent-folding
 
 ## Public Methods
 
+### `highlightMatch`
+
+Matches a search fragment against a string, ignoring accents, and wraps each match in an HTML tag — returning the original accented characters intact.
+
+- Accent-insensitive matching
+- Returns original accented text with HTML markup around matches
+- Customizable highlight tag (default: `<b>`, use `strong`, `mark`, `span`, etc.)
+- Handles various Unicode characters, including fullwidth ASCII
+
+```js
+import AccentFolding from 'accent-folding';
+
+const af = new AccentFolding();
+
+af.highlightMatch('Fulanilo López', 'lo'); // --> "Fulani<b>lo</b> <b>Ló</b>pez"
+```
+
+Use the third argument to specify the wrapping HTML tag:
+
+```js
+af.highlightMatch('Fulanilo López', 'lo', 'strong'); // --> "Fulani<strong>lo</strong> <strong>Ló</strong>pez"
+af.highlightMatch('Fulanilo López', 'lo', 'mark');   // --> "Fulani<mark>lo</mark> <mark>Ló</mark>pez"
+```
+
 ### `replace`
 
 Replaces accented characters in a string with their unaccented equivalents.
-
-#### Key Features:
 
 - Handles various Unicode characters, including fullwidth ASCII
 - Preserves original string formatting in the output
@@ -42,37 +71,6 @@ import AccentFolding from 'accent-folding';
 const af = new AccentFolding();
 
 af.replace('Fulanilo López'); // --> "Fulanilo Lopez"
-```
-
-### `highlightMatch`
-
-Highlights matched terms in a string, ignoring accents.
-
-#### Key Features:
-
-- Accent-insensitive matching
-- Customizable highlight wrapping (can use any HTML tag)
-- Preserves original string formatting in the output
-- Handles various Unicode characters, including fullwidth ASCII
-- wraps string fragment in `<b>` html tag by default.
-
-#### Potential Use Cases:
-
-- Search functionality in applications where accents should be ignored
-- Highlighting matched terms in search results
-
-```js
-import AccentFolding from 'accent-folding';
-
-const af = new AccentFolding();
-
-af.highlightMatch('Fulanilo López', 'lo'); // --> "Fulani<b>lo</b> <b>Ló</b>pez"
-```
-
-Use the 3d argument to specify the wrapping html tag (strong, em, span etc.):
-
-```js
-af.highlightMatch('Fulanilo López', 'lo', 'strong'); // --> "Fulani<strong>lo</strong> <strong>Ló</strong>pez"
 ```
 
 ## Extending and Overriding the Accent Map
@@ -93,15 +91,76 @@ console.log(accentFolder.replace('Föhn')); // Outputs: Foehn
 console.log(accentFolder.replace('✝illa')); // Outputs: tilla
 ```
 
+## Real-World Examples
+
+### Plain JS (browser)
+
+```js
+import AccentFolding from 'accent-folding';
+
+const af = new AccentFolding();
+const names = ['López', 'Müller', 'Björk', 'Ñoño', 'García', 'Renée'];
+
+const input = document.querySelector('#search');
+const list  = document.querySelector('#results');
+
+input.addEventListener('input', () => {
+  const query = input.value.trim();
+  const matches = query
+    ? names.filter(name =>
+        af.replace(name).toLowerCase().includes(af.replace(query).toLowerCase())
+      )
+    : names;
+
+  list.innerHTML = matches
+    .map(name => `<li>${query ? af.highlightMatch(name, query) : name}</li>`)
+    .join('');
+});
+```
+
+### React
+
+```jsx
+import { useState } from 'react';
+import AccentFolding from 'accent-folding';
+
+const af = new AccentFolding();
+const names = ['López', 'Müller', 'Björk', 'Ñoño', 'García', 'Renée'];
+
+export default function AccentSearch() {
+  const [query, setQuery] = useState('');
+
+  const matches = query
+    ? names.filter(name =>
+        af.replace(name).toLowerCase().includes(af.replace(query).toLowerCase())
+      )
+    : names;
+
+  return (
+    <div>
+      <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search..." />
+      <ul>
+        {matches.map(name => (
+          <li key={name} dangerouslySetInnerHTML={{ __html: query ? af.highlightMatch(name, query) : name }} />
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+`dangerouslySetInnerHTML` is safe here because `names` is app-controlled data. Never use it with strings from untrusted external input.
+
 ## Requirements
 
-Node.js version 14.7 or higher
+Node.js ≥22
 
-## Legacy usage (v1)
+<details>
+<summary>Legacy usage (v1 CommonJS API)</summary>
 
 Install with npm:
 
-```
+```shell
 npm install accent-folding@1
 ```
 
@@ -114,9 +173,7 @@ accentFoldedHighlight('Fulanilo López', 'lo'); // --> "Fulani<b>lo</b> <b>Ló</
 accentFoldedHighlight('Fulanilo López', 'lo', 'strong'); // --> "Fulani<strong>lo</strong> <strong>Ló</strong>pez"
 ```
 
-## Roadmap
-
-See the [Roadmap](./ROADMAP.md 'View the project roadmap') for planned features and future improvements.
+</details>
 
 ## Contributing
 
