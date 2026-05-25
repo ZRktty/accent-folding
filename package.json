@@ -4,6 +4,12 @@
   "description": "Accent-insensitive text matching with built-in search highlighting — the only library that returns original accented text with HTML markup around matches",
   "main": "index.js",
   "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
+  },
   "files": [
     "index.js",
     "index.d.ts",
@@ -21,8 +27,11 @@
     "semantic-release": "semantic-release",
     "test": "vitest",
     "type-check": "tsc",
+    "attw": "attw --pack .",
     "docs": "pnpm dlx serve docs",
-    "prepare": "husky"
+    "prepare": "husky",
+    "publint": "publint",
+    "size": "size-limit"
   },
   "lint-staged": {
     "*.{js,ts,tsx,json,html,css,md}": "prettier --write",
@@ -66,6 +75,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^17.0.5",
     "prettier": "3.8.3",
+    "publint": "^0.3.21",
     "semantic-release": "^25.0.3",
     "typescript": "^5.8.3",
     "vitest": "^4.1.7"
