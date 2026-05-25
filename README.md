@@ -1,5 +1,7 @@
 # accent-folding [![npm version](https://img.shields.io/npm/v/accent-folding)](https://www.npmjs.com/package/accent-folding) [![npm downloads](https://img.shields.io/npm/dw/accent-folding)](https://www.npmjs.com/package/accent-folding) ![GitHub package.json version](https://img.shields.io/github/package-json/v/ZRktty/accent-folding) [![Coverage Status](https://coveralls.io/repos/github/ZRktty/accent-folding/badge.svg?branch=main)](https://coveralls.io/github/ZRktty/accent-folding?branch=main)
 
+**[Live demo →](https://zrktty.github.io/accent-folding/)**
+
 Searching "cafe" should find "café". Highlighting "lo" in "López" should show `<b>Ló</b>pez` — not stripped text.
 
 `accent-folding` is the only library that solves both: accent-insensitive matching that returns the **original accented string** with HTML markup around matches. Zero dependencies. 2.7 kB gzipped.
@@ -158,7 +160,7 @@ Node.js ≥22
 
 Install with npm:
 
-```
+```shell
 npm install accent-folding@1
 ```
 
