@@ -7,6 +7,7 @@ created: 2026-05-25
 ## Problem
 
 Developer experience friction identified during TypeScript declaration work:
+
 - Prettier drift accumulates across commits and gets cleaned up reactively rather than at commit time
 - No validation that the published package shape is correct for npm consumers
 - TypeScript declarations ship but are not verified from a real consumer's perspective
@@ -25,10 +26,12 @@ Add four lightweight tools. No build step changes, no source migration.
 **Goal:** Run prettier + eslint on staged files before every commit. Eliminates prettier drift.
 
 **Files:**
+
 - Create: `.husky/pre-commit`
 - Modify: `package.json` — add `lint-staged` config and `prepare` script
 
 **Approach:**
+
 - `pnpm add -D husky lint-staged`
 - `pnpm exec husky init` — creates `.husky/pre-commit`
 - Hook runs `pnpm exec lint-staged`
@@ -50,10 +53,12 @@ Add four lightweight tools. No build step changes, no source migration.
 **Goal:** Validate `package.json` exports, `main`, `types`, and `files` are correct for npm consumers. Run in CI.
 
 **Files:**
+
 - Modify: `package.json` — add `"publint": "publint"` script
 - Modify: `.github/workflows/coverage.yml` — add publint step
 
 **Approach:**
+
 - `publint` is zero-install via `pnpm dlx`, or add as devDependency for CI caching
 - Add script: `"publint": "publint"`
 - CI step after type-check: `pnpm run publint`
@@ -67,10 +72,12 @@ Add four lightweight tools. No build step changes, no source migration.
 **Goal:** Verify TypeScript declarations work correctly from a consumer's perspective across moduleResolution modes (node16, bundler, etc.).
 
 **Files:**
+
 - Modify: `package.json` — add `"attw": "attw --pack ."` script
 - Modify: `.github/workflows/coverage.yml` — add attw step
 
 **Approach:**
+
 - `pnpm add -D @arethetypeswrong/cli`
 - Script: `"attw": "attw --pack ."`
 - CI step after type-check: `pnpm run attw`
@@ -85,10 +92,12 @@ Add four lightweight tools. No build step changes, no source migration.
 **Goal:** Enforce the "2.7 kB gzipped" claim from the README. Fail CI if the package grows beyond a defined threshold.
 
 **Files:**
+
 - Modify: `package.json` — add `size-limit` config and `size` script
 - Modify: `.github/workflows/coverage.yml` — add size-limit step
 
 **Approach:**
+
 - `pnpm add -D size-limit @size-limit/preset-small-lib`
 - Config in `package.json`:
   ```json

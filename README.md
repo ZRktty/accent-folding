@@ -188,7 +188,7 @@ cd demo && pnpm dev
 
 ## Requirements
 
-Node.js ≥22
+Node.js ≥18
 
 <details>
 <summary>Legacy usage (v1 CommonJS API)</summary>
