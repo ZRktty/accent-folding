@@ -61,6 +61,8 @@ Matches a search fragment against a string, ignoring accents, and wraps each mat
 - Customizable highlight tag (default: `<b>`, use `strong`, `mark`, `span`, etc.)
 - Handles various Unicode characters, including fullwidth ASCII
 
+> **Note:** `highlightMatch` returns an HTML string and does not escape its inputs. Only inject the output into the DOM when `str` comes from trusted, app-controlled data — not from untrusted user input.
+
 ```js
 import AccentFolding from 'accent-folding';
 
