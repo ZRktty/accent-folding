@@ -33,6 +33,7 @@
     "size": "size-limit"
   },
   "lint-staged": {
+    "*.{js,ts,tsx,json,md,css,html}": "prettier --write",
     "*.{js,ts,tsx}": "eslint --fix"
   },
   "size-limit": [
