@@ -27,7 +27,6 @@
     "semantic-release": "semantic-release",
     "test": "vitest",
     "type-check": "tsc",
-    "attw": "pnpm dlx @arethetypeswrong/cli --pack .",
     "docs": "pnpm dlx serve docs",
     "prepare": "husky",
     "publint": "publint",
