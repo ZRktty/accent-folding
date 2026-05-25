@@ -31,6 +31,12 @@ jobs:
       - name: Type check
         run: pnpm run type-check
 
+      - name: Check package shape
+        run: pnpm run publint
+
+      - name: Check bundle size
+        run: pnpm run size
+
       - name: Run tests with coverage
         run: pnpm run coverage
 

@@ -1,4 +1,4 @@
-# accent-folding [![npm version](https://img.shields.io/npm/v/accent-folding)](https://www.npmjs.com/package/accent-folding) [![npm downloads](https://img.shields.io/npm/dw/accent-folding)](https://www.npmjs.com/package/accent-folding) ![GitHub package.json version](https://img.shields.io/github/package-json/v/ZRktty/accent-folding) [![Coverage Status](https://coveralls.io/repos/github/ZRktty/accent-folding/badge.svg?branch=main)](https://coveralls.io/github/ZRktty/accent-folding?branch=main)
+# accent-folding [![npm version](https://img.shields.io/npm/v/accent-folding)](https://www.npmjs.com/package/accent-folding) [![npm downloads](https://img.shields.io/npm/dw/accent-folding)](https://www.npmjs.com/package/accent-folding) [![Bundle size](https://img.shields.io/bundlephobia/minzip/accent-folding)](https://bundlephobia.com/package/accent-folding) [![GitHub package.json version](https://img.shields.io/github/package-json/v/ZRktty/accent-folding)](https://github.com/ZRktty/accent-folding) [![Coverage Status](https://coveralls.io/repos/github/ZRktty/accent-folding/badge.svg?branch=main)](https://coveralls.io/github/ZRktty/accent-folding?branch=main)
 
 **[Live demo →](https://zrktty.github.io/accent-folding/)**
 
@@ -216,4 +216,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Credits
 
-The initial idea came from the article [Accent Folding for Auto-Complete](https://alistapart.com/article/accent-folding-for-auto-complete/) by John Nunemaker on A List Apart. This library has since grown beyond that original concept, but the credit belongs there.
+The initial idea came from the article [Accent Folding for Auto-Complete](https://alistapart.com/article/accent-folding-for-auto-complete/) by Carlos Bueno on A List Apart (February 2010). This library has since grown beyond that original concept, but the credit belongs there.

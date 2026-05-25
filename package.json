@@ -4,13 +4,19 @@
   "description": "Accent-insensitive text matching with built-in search highlighting — the only library that returns original accented text with HTML markup around matches",
   "main": "index.js",
   "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
+  },
   "files": [
     "index.js",
     "index.d.ts",
     "src/"
   ],
   "engines": {
-    "node": ">=22"
+    "node": ">=22.22.1"
   },
   "type": "module",
   "scripts": {
@@ -21,8 +27,25 @@
     "semantic-release": "semantic-release",
     "test": "vitest",
     "type-check": "tsc",
-    "docs": "pnpm dlx serve docs"
+    "docs": "pnpm dlx serve docs",
+    "prepare": "husky",
+    "publint": "publint",
+    "size": "size-limit"
   },
+  "lint-staged": {
+    "*.{json,md,css,html}": "prettier --write",
+    "*.{js,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
+  },
+  "size-limit": [
+    {
+      "path": "index.js",
+      "limit": "4 kB",
+      "brotli": true
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ZRktty/accent-folding.git"
@@ -54,12 +77,17 @@
   "homepage": "https://github.com/ZRktty/accent-folding#readme",
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@size-limit/preset-small-lib": "^12.1.0",
     "@vitest/coverage-v8": "^4.1.7",
     "eslint": "^9.9.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.6.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.5",
     "prettier": "3.8.3",
+    "publint": "^0.3.21",
     "semantic-release": "^25.0.3",
+    "size-limit": "^12.1.0",
     "typescript": "^5.8.3",
     "vitest": "^4.1.7"
   }
