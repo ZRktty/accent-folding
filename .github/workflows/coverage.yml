@@ -34,6 +34,9 @@ jobs:
       - name: Check package shape
         run: pnpm run publint
 
+      - name: Check bundle size
+        run: pnpm run size
+
       - name: Run tests with coverage
         run: pnpm run coverage
 
