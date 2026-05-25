@@ -32,6 +32,24 @@ or with yarn:
 yarn add accent-folding
 ```
 
+## TypeScript
+
+Full type declarations are included. No `@types/` package needed.
+
+```ts
+import AccentFolding, { type AccentMap } from 'accent-folding';
+
+const af = new AccentFolding();
+
+const replaced: string = af.replace('café');
+const highlighted: string = af.highlightMatch('López', 'lo');
+const highlightedMark: string = af.highlightMatch('López', 'lo', 'mark');
+
+// Custom accent map with typed argument
+const customMap: AccentMap = { ö: 'oe', ü: 'ue' };
+const afCustom = new AccentFolding(customMap);
+```
+
 ## Public Methods
 
 ### `highlightMatch`
@@ -42,6 +60,8 @@ Matches a search fragment against a string, ignoring accents, and wraps each mat
 - Returns original accented text with HTML markup around matches
 - Customizable highlight tag (default: `<b>`, use `strong`, `mark`, `span`, etc.)
 - Handles various Unicode characters, including fullwidth ASCII
+
+> **Note:** `highlightMatch` returns an HTML string and does not escape its inputs. Only inject the output into the DOM when `str` comes from trusted, app-controlled data — not from untrusted user input.
 
 ```js
 import AccentFolding from 'accent-folding';
@@ -55,7 +75,7 @@ Use the third argument to specify the wrapping HTML tag:
 
 ```js
 af.highlightMatch('Fulanilo López', 'lo', 'strong'); // --> "Fulani<strong>lo</strong> <strong>Ló</strong>pez"
-af.highlightMatch('Fulanilo López', 'lo', 'mark');   // --> "Fulani<mark>lo</mark> <mark>Ló</mark>pez"
+af.highlightMatch('Fulanilo López', 'lo', 'mark'); // --> "Fulani<mark>lo</mark> <mark>Ló</mark>pez"
 ```
 
 ### `replace`
@@ -102,19 +122,19 @@ const af = new AccentFolding();
 const names = ['López', 'Müller', 'Björk', 'Ñoño', 'García', 'Renée'];
 
 const input = document.querySelector('#search');
-const list  = document.querySelector('#results');
+const list = document.querySelector('#results');
 
 input.addEventListener('input', () => {
-  const query = input.value.trim();
-  const matches = query
-    ? names.filter(name =>
-        af.replace(name).toLowerCase().includes(af.replace(query).toLowerCase())
-      )
-    : names;
+	const query = input.value.trim();
+	const matches = query
+		? names.filter((name) =>
+				af.replace(name).toLowerCase().includes(af.replace(query).toLowerCase())
+			)
+		: names;
 
-  list.innerHTML = matches
-    .map(name => `<li>${query ? af.highlightMatch(name, query) : name}</li>`)
-    .join('');
+	list.innerHTML = matches
+		.map((name) => `<li>${query ? af.highlightMatch(name, query) : name}</li>`)
+		.join('');
 });
 ```
 
@@ -128,28 +148,43 @@ const af = new AccentFolding();
 const names = ['López', 'Müller', 'Björk', 'Ñoño', 'García', 'Renée'];
 
 export default function AccentSearch() {
-  const [query, setQuery] = useState('');
+	const [query, setQuery] = useState('');
 
-  const matches = query
-    ? names.filter(name =>
-        af.replace(name).toLowerCase().includes(af.replace(query).toLowerCase())
-      )
-    : names;
+	const matches = query
+		? names.filter((name) =>
+				af.replace(name).toLowerCase().includes(af.replace(query).toLowerCase())
+			)
+		: names;
 
-  return (
-    <div>
-      <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search..." />
-      <ul>
-        {matches.map(name => (
-          <li key={name} dangerouslySetInnerHTML={{ __html: query ? af.highlightMatch(name, query) : name }} />
-        ))}
-      </ul>
-    </div>
-  );
+	return (
+		<div>
+			<input
+				value={query}
+				onChange={(e) => setQuery(e.target.value)}
+				placeholder="Search..."
+			/>
+			<ul>
+				{matches.map((name) => (
+					<li
+						key={name}
+						dangerouslySetInnerHTML={{
+							__html: query ? af.highlightMatch(name, query) : name,
+						}}
+					/>
+				))}
+			</ul>
+		</div>
+	);
 }
 ```
 
 `dangerouslySetInnerHTML` is safe here because `names` is app-controlled data. Never use it with strings from untrusted external input.
+
+A full React + TypeScript demo (Vite, typed `AccentMap`, search highlight, custom map showcase) is available in [`demo/`](demo/). Run it with:
+
+```shell
+cd demo && pnpm dev
+```
 
 ## Requirements
 
@@ -178,3 +213,7 @@ accentFoldedHighlight('Fulanilo López', 'lo', 'strong'); // --> "Fulani<strong>
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Credits
+
+The initial idea came from the article [Accent Folding for Auto-Complete](https://alistapart.com/article/accent-folding-for-auto-complete/) by John Nunemaker on A List Apart. This library has since grown beyond that original concept, but the credit belongs there.

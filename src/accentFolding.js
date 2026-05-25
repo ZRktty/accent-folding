@@ -43,8 +43,9 @@ class AccentFolding {
 				throw new TypeError('Both str and fragment must be strings');
 			}
 
-			if (typeof wrapTag !== 'string') {
-				throw new TypeError('wrapTag must be a string');
+			const allowedWrapTags = new Set(['b', 'strong', 'mark', 'span']);
+			if (typeof wrapTag !== 'string' || !allowedWrapTags.has(wrapTag)) {
+				wrapTag = 'b';
 			}
 
 			const escapedFragment = fragment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
