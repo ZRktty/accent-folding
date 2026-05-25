@@ -121,7 +121,7 @@ describe('AccentFolding', () => {
 
 		it('should not lowercase plain uppercase ASCII letters', () => {
 			// Regression: H, I, J, N, P, S, T, W, Y were accidentally in the accent
-			// map and got silently lowercased (e.g. replace('NORWAY') → 'norWAy')
+			// map and got silently lowercased (e.g. replace('NORWAY') → 'nORwAy')
 			expect(accentFolder.replace('NORWAY')).toBe('NORWAY');
 			expect(accentFolder.replace('PARIS')).toBe('PARIS');
 			expect(accentFolder.replace('John')).toBe('John');
