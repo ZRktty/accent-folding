@@ -84,7 +84,7 @@
   <h2>Vanilla JS <span class="badge badge-js">browser</span></h2>
   <input type="text" id="js-query" placeholder="Search names..." autocomplete="off" />
   <div class="controls">
-    <span>Wrap tag:</span>
+    <label for="js-tag">Wrap tag:</label>
     <select id="js-tag">
       <option value="b">b (default)</option>
       <option value="strong">strong</option>
@@ -110,7 +110,7 @@
 </div>
 
 <script type="module">
-  import AccentFolding from 'https://esm.sh/accent-folding';
+  import AccentFolding from 'https://esm.sh/accent-folding@2.2.0';
 
   const names = ['López', 'Müller', 'Björk', 'Ñoño', 'García', 'Renée', 'Ångström', 'Čehov', 'Dubček'];
   const af    = new AccentFolding();
@@ -150,7 +150,7 @@
   import { createElement, useState } from 'https://esm.sh/react@18';
   import { createRoot }              from 'https://esm.sh/react-dom@18/client';
   import htm                         from 'https://esm.sh/htm';
-  import AccentFolding               from 'https://esm.sh/accent-folding';
+  import AccentFolding               from 'https://esm.sh/accent-folding@2.2.0';
 
   const html  = htm.bind(createElement);
   const af    = new AccentFolding();
@@ -174,8 +174,8 @@
           autoComplete="off"
         />
         <div className="controls">
-          <span>Wrap tag:</span>
-          <select value=${tag} onChange=${e => setTag(e.target.value)}>
+          <label htmlFor="react-tag">Wrap tag:</label>
+          <select id="react-tag" value=${tag} onChange=${e => setTag(e.target.value)}>
             <option value="b">b (default)</option>
             <option value="strong">strong</option>
             <option value="mark">mark</option>

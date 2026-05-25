@@ -113,7 +113,7 @@ input.addEventListener('input', () => {
     : names;
 
   list.innerHTML = matches
-    .map(name => `<li>${af.highlightMatch(name, query)}</li>`)
+    .map(name => `<li>${query ? af.highlightMatch(name, query) : name}</li>`)
     .join('');
 });
 ```
@@ -141,7 +141,7 @@ export default function AccentSearch() {
       <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search..." />
       <ul>
         {matches.map(name => (
-          <li key={name} dangerouslySetInnerHTML={{ __html: af.highlightMatch(name, query) }} />
+          <li key={name} dangerouslySetInnerHTML={{ __html: query ? af.highlightMatch(name, query) : name }} />
         ))}
       </ul>
     </div>
@@ -149,7 +149,7 @@ export default function AccentSearch() {
 }
 ```
 
-`dangerouslySetInnerHTML` is safe here because the strings come from your own data, not user-generated HTML.
+`dangerouslySetInnerHTML` is safe here because `names` is app-controlled data. Never use it with strings from untrusted external input.
 
 ## Requirements
 
