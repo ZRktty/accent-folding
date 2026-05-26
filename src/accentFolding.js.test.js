@@ -133,6 +133,21 @@ describe('AccentFolding', () => {
 		});
 	});
 
+	describe('NFD input handling', () => {
+		it('replace() handles NFD-encoded input identically to NFC', () => {
+			const nfc = 'Ñoño García';
+			const nfd = nfc.normalize('NFD');
+			expect(accentFolder.replace(nfd)).toBe(accentFolder.replace(nfc));
+			expect(accentFolder.replace(nfd)).toBe('nono Garcia');
+		});
+
+		it('highlightMatch() handles NFD input correctly', () => {
+			expect(accentFolder.highlightMatch('ñoño'.normalize('NFD'), 'n')).toBe(
+				'<b>ñ</b>o<b>ñ</b>o'
+			);
+		});
+	});
+
 	describe('constructor', () => {
 		it('should initialize with default accent map', () => {
 			expect(accentFolder.replace('á')).toBe('a');
