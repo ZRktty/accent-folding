@@ -214,7 +214,7 @@ accentFoldedHighlight('Fulanilo López', 'lo', 'strong'); // --> "Fulani<strong>
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-**Development requires Node.js ≥20.19** (ESLint v10 constraint). The published package supports Node.js ≥18 for consumers.
+**Development requires Node.js ≥22** (ESLint v10 constraint). The published package supports Node.js ≥18 for consumers.
 
 ## Credits
 
