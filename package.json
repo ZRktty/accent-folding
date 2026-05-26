@@ -18,6 +18,13 @@
   "engines": {
     "node": ">=18"
   },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": ">=22.0.0",
+      "onFail": "warn"
+    }
+  },
   "type": "module",
   "scripts": {
     "coverage": "vitest run --coverage",

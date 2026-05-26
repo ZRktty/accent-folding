@@ -214,6 +214,8 @@ accentFoldedHighlight('Fulanilo López', 'lo', 'strong'); // --> "Fulani<strong>
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+**Development requires Node.js ≥22** (ESLint v10 constraint). The published package supports Node.js ≥18 for consumers.
+
 ## Credits
 
 The initial idea came from the article [Accent Folding for Auto-Complete](https://alistapart.com/article/accent-folding-for-auto-complete/) by Carlos Bueno on A List Apart (February 2010). This library has since grown beyond that original concept, but the credit belongs there.
