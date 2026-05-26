@@ -35,9 +35,7 @@ class AccentFolding {
 		if (typeof text !== 'string') {
 			throw new TypeError('Input must be a string');
 		}
-		return [...text.normalize('NFC')]
-			.map((char) => this.#accentMap.get(char) || char)
-			.join('');
+		return this.#fold(text);
 	}
 
 	highlightMatch(str, fragment, wrapTag = 'b') {
@@ -48,15 +46,14 @@ class AccentFolding {
 				throw new TypeError('Both str and fragment must be strings');
 			}
 
-			str = str.normalize('NFC');
-
 			const allowedWrapTags = new Set(['b', 'strong', 'mark', 'span']);
 			if (typeof wrapTag !== 'string' || !allowedWrapTags.has(wrapTag)) {
 				wrapTag = 'b';
 			}
 
 			const escapedFragment = fragment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-			const strFolded = this.#fold(str).toLowerCase();
+			const strNFC = str.normalize('NFC');
+			const strFolded = this.#fold(strNFC).toLowerCase();
 			const fragmentFolded = this.#fold(escapedFragment).toLowerCase();
 
 			const re = new RegExp(fragmentFolded, 'g');
@@ -66,12 +63,12 @@ class AccentFolding {
 
 			strFolded.replace(re, (match, index) => {
 				hasMatch = true;
-				result += this.#escapeHtml(str.slice(lastIndex, index));
-				result += `<${wrapTag}>${this.#escapeHtml(str.slice(index, index + match.length))}</${wrapTag}>`;
+				result += this.#escapeHtml(strNFC.slice(lastIndex, index));
+				result += `<${wrapTag}>${this.#escapeHtml(strNFC.slice(index, index + match.length))}</${wrapTag}>`;
 				lastIndex = index + match.length;
 			});
 
-			result += this.#escapeHtml(str.slice(lastIndex));
+			result += this.#escapeHtml(strNFC.slice(lastIndex));
 
 			return hasMatch ? result : str;
 		} catch (error) {
