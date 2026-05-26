@@ -87,6 +87,24 @@ describe('AccentFolding', () => {
 			expect(accentFolder.highlightMatch('a+b=c', '+')).toBe('a<b>+</b>b=c');
 		});
 
+		it('handles multi-character folding (ß → ss)', () => {
+			expect(accentFolder.highlightMatch('Straße', 'ss')).toBe('Stra<b>ß</b>e');
+		});
+
+		it('handles multi-character folding (æ → ae)', () => {
+			expect(accentFolder.highlightMatch('encyclopædia', 'ae')).toBe(
+				'encyclop<b>æ</b>dia'
+			);
+		});
+
+		it('does not double-highlight when a single folded char expands to multiple matches', () => {
+			// 'ß' folds to 'ss'; a search for 's' would find both positions in 'ss'
+			// but should only highlight 'ß' once
+			expect(accentFolder.highlightMatch('Straße', 's')).toBe(
+				'<b>S</b>tra<b>ß</b>e'
+			);
+		});
+
 		// it('preserves HTML in original string', () => {
 		//     expect(accentFold.highlightMatch("<p>Héllo</p>", "he")).toBe("<p><b>Hé</b>llo</p>");
 		// });
@@ -134,6 +152,22 @@ describe('AccentFolding', () => {
 
 		it('should handle empty string', () => {
 			expect(accentFolder.replace('')).toBe('');
+		});
+
+		it('should replace ß with ss (German sharp s)', () => {
+			expect(accentFolder.replace('Straße')).toBe('Strasse');
+		});
+
+		it('should replace æ with ae (ligature)', () => {
+			expect(accentFolder.replace('encyclopædia')).toBe('encyclopaedia');
+		});
+
+		it('should replace œ with oe (ligature)', () => {
+			expect(accentFolder.replace('cœur')).toBe('coeur');
+		});
+
+		it('should replace Þ with th (Icelandic thorn)', () => {
+			expect(accentFolder.replace('Þór')).toBe('thor');
 		});
 	});
 
