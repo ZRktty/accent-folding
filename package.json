@@ -16,7 +16,7 @@
     "src/"
   ],
   "engines": {
-    "node": ">=22.22.1"
+    "node": ">=18"
   },
   "type": "module",
   "scripts": {
@@ -43,7 +43,10 @@
     {
       "path": "index.js",
       "limit": "4 kB",
-      "brotli": true
+      "brotli": true,
+      "ignore": [
+        "module"
+      ]
     }
   ],
   "repository": {

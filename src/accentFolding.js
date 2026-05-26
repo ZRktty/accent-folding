@@ -1,4 +1,6 @@
-import defaultAccentMap from './accentMap.json';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const defaultAccentMap = require('./accentMap.json');
 
 class AccentFolding {
 	#cache;
