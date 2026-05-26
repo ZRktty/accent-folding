@@ -21,6 +21,7 @@ class AccentFolding {
 
 	#fold(s) {
 		if (!s) return '';
+		s = s.normalize('NFC');
 		if (this.#cache.has(s)) return this.#cache.get(s);
 
 		const ret = [...s]
@@ -34,7 +35,9 @@ class AccentFolding {
 		if (typeof text !== 'string') {
 			throw new TypeError('Input must be a string');
 		}
-		return [...text].map((char) => this.#accentMap.get(char) || char).join('');
+		return [...text.normalize('NFC')]
+			.map((char) => this.#accentMap.get(char) || char)
+			.join('');
 	}
 
 	highlightMatch(str, fragment, wrapTag = 'b') {
@@ -44,6 +47,8 @@ class AccentFolding {
 			if (typeof str !== 'string' || typeof fragment !== 'string') {
 				throw new TypeError('Both str and fragment must be strings');
 			}
+
+			str = str.normalize('NFC');
 
 			const allowedWrapTags = new Set(['b', 'strong', 'mark', 'span']);
 			if (typeof wrapTag !== 'string' || !allowedWrapTags.has(wrapTag)) {
