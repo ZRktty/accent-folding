@@ -128,6 +128,10 @@ describe('AccentFolding', () => {
 			expect(accentFolder.replace('HIJNTPSWJ')).toBe('HIJNTPSWJ');
 		});
 
+		it('should replace Ĺ with l (regression: mapping typo prevention)', () => {
+			expect(accentFolder.replace('Ĺukasz')).toBe('lukasz');
+		});
+
 		it('should handle empty string', () => {
 			expect(accentFolder.replace('')).toBe('');
 		});
