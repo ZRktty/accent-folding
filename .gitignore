@@ -5,3 +5,4 @@ coverage/
 .mcp.json
 .claude/
 demo/dist/
+package-lock.json
