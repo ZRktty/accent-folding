@@ -4,6 +4,8 @@ Thanks for your interest in contributing to `accent-folding`!
 
 ## Getting started
 
+**Prerequisites:** Node.js ≥ 18 and pnpm. If you don't have pnpm, enable it via [Corepack](https://nodejs.org/api/corepack.html): `corepack enable`.
+
 ```sh
 git clone https://github.com/ZRktty/accent-folding.git
 cd accent-folding
@@ -34,8 +36,8 @@ Open an issue describing the use case before implementing anything large. For sm
 ## Code style
 
 - No build step — plain JavaScript.
-- No dependencies.
-- Keep it small. The library is 2.7 kB gzipped; changes that balloon the size need strong justification.
+- Avoid adding dependencies. The library ships with zero runtime dependencies.
+- Keep it small. Run `pnpm size` to check bundle size; changes that significantly increase it need strong justification.
 
 ## License
 

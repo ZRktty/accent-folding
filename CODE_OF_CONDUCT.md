@@ -21,7 +21,7 @@ Examples of unacceptable behavior:
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by opening an issue or contacting the maintainer at [zoltan@zrktty.dev](mailto:zoltan@zrktty.dev). All complaints will be reviewed and investigated promptly.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by contacting the maintainer privately at [zoltan@zrktty.dev](mailto:zoltan@zrktty.dev). Please do not open a public issue for conduct violations. All complaints will be reviewed and investigated promptly and with confidentiality.
 
 ## Attribution
 
