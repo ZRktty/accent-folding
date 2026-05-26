@@ -91,6 +91,7 @@
   "homepage": "https://github.com/ZRktty/accent-folding#readme",
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@semantic-release/git": "^10.0.1",
     "@size-limit/preset-small-lib": "^12.1.0",
     "@vitest/coverage-v8": "^4.1.7",
     "eslint": "^10.4.0",
