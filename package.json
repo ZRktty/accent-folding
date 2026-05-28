@@ -86,6 +86,8 @@
     "normalize",
     "transliteration",
     "deburr",
+    "latinize",
+    "latinize alternative",
     "case insensitive",
     "i18n",
     "combobox"
