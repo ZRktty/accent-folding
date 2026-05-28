@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import npmIcon from '../npm-icon.svg';
 import AccentFolding, {
 	type AccentMap,
 	type MatchPosition,
@@ -74,16 +75,7 @@ export default function App() {
 							title="View on npm"
 							className="opacity-70 hover:opacity-100 transition-opacity"
 						>
-							<svg
-								viewBox="0 0 24 24"
-								width="20"
-								height="20"
-								aria-label="npm"
-								role="img"
-								fill="#CB3837"
-							>
-								<path d="M1.763 0C.786 0 0 .786 0 1.763v20.474C0 23.214.786 24 1.763 24h20.474c.977 0 1.763-.786 1.763-1.763V1.763C24 .786 23.214 0 22.237 0zM5.13 5.323l13.837.019-.009 13.568h-3.94l.01-9.635-5.444-.012-.01 9.648H5.12z" />
-							</svg>
+							<img src={npmIcon} alt="npm" width={20} height={20} />
 						</a>
 						<a
 							href="https://github.com/ZRktty/accent-folding"
