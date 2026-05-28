@@ -143,8 +143,8 @@ describe('AccentFolding', () => {
 			expect(accentFolder.replace('HIJNTPSWJ')).toBe('HIJNTPSWJ');
 		});
 
-		it('should replace Ĺ with l (regression: mapping typo prevention)', () => {
-			expect(accentFolder.replace('Ĺukasz')).toBe('lukasz');
+		it('should replace Ĺ with L (regression: mapping typo prevention)', () => {
+			expect(accentFolder.replace('Ĺukasz')).toBe('Lukasz');
 		});
 
 		it('should handle empty string', () => {
@@ -164,8 +164,8 @@ describe('AccentFolding', () => {
 				expect(accentFolder.replace('cœur')).toBe('coeur');
 			});
 
-			it('replaces Þ with th (Icelandic thorn)', () => {
-				expect(accentFolder.replace('Þór')).toBe('thor');
+			it('replaces Þ with TH (Icelandic thorn, uppercase)', () => {
+				expect(accentFolder.replace('Þór')).toBe('THor');
 			});
 		});
 	});
@@ -175,7 +175,7 @@ describe('AccentFolding', () => {
 			const nfc = 'Ñoño García';
 			const nfd = nfc.normalize('NFD');
 			expect(accentFolder.replace(nfd)).toBe(accentFolder.replace(nfc));
-			expect(accentFolder.replace(nfd)).toBe('nono Garcia');
+			expect(accentFolder.replace(nfd)).toBe('Nono Garcia');
 		});
 
 		it('highlightMatch() handles NFD input correctly', () => {
