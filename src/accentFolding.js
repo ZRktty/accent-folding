@@ -72,6 +72,30 @@ class AccentFolding {
 		return positions;
 	}
 
+	/**
+	 * Returns the start/end index pairs of every accent-insensitive match of
+	 * `fragment` in `str`. Indices refer to the original string — `end` is
+	 * exclusive, so `str.slice(start, end)` yields the matched substring.
+	 *
+	 * Use this instead of `highlightMatch` whenever you need to own the
+	 * rendering: React elements, React Native `<Text>`, PDF primitives,
+	 * terminal ANSI codes, canvas pixel offsets, etc.
+	 *
+	 * @param {string} str - The string to search in.
+	 * @param {string} fragment - The search query (accent-insensitive, case-insensitive).
+	 * @returns {{ start: number, end: number }[]} Matched ranges, or `[]` when there is no match.
+	 * @throws {TypeError} If either argument is not a string.
+	 *
+	 * @example
+	 * af.matchPositions('Fulanilo López', 'lo')
+	 * // → [{ start: 6, end: 8 }, { start: 9, end: 11 }]
+	 *
+	 * af.matchPositions('Straße', 'ss')
+	 * // → [{ start: 4, end: 5 }]  — ß folds to ss; position maps back to ß
+	 *
+	 * af.matchPositions('Hello World', 'xyz')
+	 * // → []
+	 */
 	matchPositions(str, fragment) {
 		if (!fragment) return [];
 		if (typeof str !== 'string' || typeof fragment !== 'string') {
