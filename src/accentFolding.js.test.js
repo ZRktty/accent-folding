@@ -48,12 +48,6 @@ describe('AccentFolding', () => {
 			);
 		});
 
-		it("should wrap matched fragment with custom tag added in second parameter '<strong>'", () => {
-			expect(
-				accentFolder.highlightMatch('Fulanilo López', 'lo', 'strong')
-			).toEqual('Fulani<strong>lo</strong> <strong>Ló</strong>pez');
-		});
-
 		it('wraps matched fragment with custom tag', () => {
 			expect(
 				accentFolder.highlightMatch('Fulanilo López', 'lo', 'strong')
@@ -85,6 +79,27 @@ describe('AccentFolding', () => {
 
 		it('handles special characters in fragment', () => {
 			expect(accentFolder.highlightMatch('a+b=c', '+')).toBe('a<b>+</b>b=c');
+		});
+
+		describe('multi-character folding', () => {
+			it('highlights ß when searching ss', () => {
+				expect(accentFolder.highlightMatch('Straße', 'ss')).toBe(
+					'Stra<b>ß</b>e'
+				);
+			});
+
+			it('highlights æ when searching ae', () => {
+				expect(accentFolder.highlightMatch('encyclopædia', 'ae')).toBe(
+					'encyclop<b>æ</b>dia'
+				);
+			});
+
+			it('does not double-highlight a char that expands to multiple folded chars', () => {
+				// ß folds to ss; searching s finds both positions in foldedStr but should wrap ß once
+				expect(accentFolder.highlightMatch('Straße', 's')).toBe(
+					'<b>S</b>tra<b>ß</b>e'
+				);
+			});
 		});
 
 		// it('preserves HTML in original string', () => {
@@ -134,6 +149,24 @@ describe('AccentFolding', () => {
 
 		it('should handle empty string', () => {
 			expect(accentFolder.replace('')).toBe('');
+		});
+
+		describe('multi-character mappings', () => {
+			it('replaces ß with ss (German sharp s)', () => {
+				expect(accentFolder.replace('Straße')).toBe('Strasse');
+			});
+
+			it('replaces æ with ae', () => {
+				expect(accentFolder.replace('encyclopædia')).toBe('encyclopaedia');
+			});
+
+			it('replaces œ with oe', () => {
+				expect(accentFolder.replace('cœur')).toBe('coeur');
+			});
+
+			it('replaces Þ with th (Icelandic thorn)', () => {
+				expect(accentFolder.replace('Þór')).toBe('thor');
+			});
 		});
 	});
 
