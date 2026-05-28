@@ -210,6 +210,41 @@ accentFoldedHighlight('Fulanilo López', 'lo', 'strong'); // --> "Fulani<strong>
 
 </details>
 
+## Migrating from `latinize`
+
+[`latinize`](https://github.com/dundalek/latinize) was archived in November 2024. Here's how to migrate to `accent-folding`:
+
+```diff
+- import latinize from 'latinize';
++ import AccentFolding from 'accent-folding';
++ const af = new AccentFolding();
+
+- const result = latinize('Ñoño García');
++ const result = af.replace('Ñoño García');
+
+- const filtered = names.filter(n => latinize(n).toLowerCase().includes(latinize(query).toLowerCase()));
++ const filtered = names.filter(n => af.replace(n).toLowerCase().includes(af.replace(query).toLowerCase()));
+
+// New: highlight matches in results (no latinize equivalent)
++ const highlighted = af.highlightMatch('López', 'lo'); // → '<b>Ló</b>pez'
+```
+
+### How they compare
+
+|                             | `latinize`                         | `accent-folding`                                                                |
+| --------------------------- | ---------------------------------- | ------------------------------------------------------------------------------- |
+| Status                      | ❌ Archived Nov 2024               | ✅ Actively maintained                                                          |
+| `highlightMatch()`          | ❌ No                              | ✅ Unique — wraps matches in HTML while preserving original accented characters |
+| NFC/NFD normalization       | ❌ NFD input produces wrong output | ✅ Handles both automatically                                                   |
+| Result caching              | ❌ No                              | ✅ Yes — repeated calls with the same input are cached                          |
+| Test coverage               | ❌ Not reported                    | ✅ 100% line + branch coverage                                                  |
+| TypeScript                  | ⚠️ Added in v2 (archived)          | ✅ Full types, no `@types/` needed                                              |
+| Latin script coverage       | ✅ ~1,000 entries                  | ✅ ~700 entries (same practical coverage for Western European text)             |
+| Cyrillic / IPA / subscripts | ✅ Yes                             | ❌ No — Latin script only                                                       |
+| Bundle size                 | ~6 kB gzipped                      | ~2.7 kB gzipped                                                                 |
+
+**Honest caveat:** `latinize` covers ~1,000 character mappings including Cyrillic, IPA phonetic symbols, and subscripts. `accent-folding` focuses on Latin script only (~700 entries). For typical search/autocomplete over Western European names and text the coverage is identical — but if you need to fold Russian, Greek, or IPA, [`transliteration`](https://www.npmjs.com/package/transliteration) is the right choice.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
