@@ -4,7 +4,7 @@
 
 Searching "cafe" should find "café". Highlighting "lo" in "López" should show `<b>Ló</b>pez` — not stripped text.
 
-`accent-folding` is the only library that solves both: accent-insensitive matching that returns the **original accented string** with HTML markup around matches. Zero dependencies. 2.7 kB gzipped.
+`accent-folding` is the only library that solves both: accent-insensitive matching that returns the **original accented string** with HTML markup around matches — or raw index positions for React, React Native, PDF, canvas, and any environment where HTML strings don't belong. Zero dependencies. 2.7 kB gzipped.
 
 ## Installation
 
@@ -37,20 +37,45 @@ yarn add accent-folding
 Full type declarations are included. No `@types/` package needed.
 
 ```ts
-import AccentFolding, { type AccentMap } from 'accent-folding';
+import AccentFolding, { type AccentMap, type MatchPosition } from 'accent-folding';
 
 const af = new AccentFolding();
 
 const replaced: string = af.replace('café');
+const positions: MatchPosition[] = af.matchPositions('López', 'lo');
 const highlighted: string = af.highlightMatch('López', 'lo');
 const highlightedMark: string = af.highlightMatch('López', 'lo', 'mark');
 
 // Custom accent map with typed argument
 const customMap: AccentMap = { ö: 'oe', ü: 'ue' };
 const afCustom = new AccentFolding(customMap);
+
+// Type your own rendering helper
+function renderParts(text: string, positions: MatchPosition[]) { ... }
 ```
 
 ## Public Methods
+
+### `matchPositions`
+
+Returns an array of `{ start, end }` index pairs for every accent-insensitive match of `fragment` in `str`. `end` is exclusive — pass directly to `str.slice(start, end)`.
+
+```js
+import AccentFolding from 'accent-folding';
+
+const af = new AccentFolding();
+
+af.matchPositions('Fulanilo López', 'lo');
+// → [{ start: 6, end: 8 }, { start: 9, end: 11 }]
+
+af.matchPositions('Straße', 'ss');
+// → [{ start: 4, end: 5 }]  ß treated as ss, position points back to ß
+
+af.matchPositions('Hello World', 'xyz');
+// → []
+```
+
+This is the framework-agnostic primitive. Use it when you need to control rendering yourself — React without `dangerouslySetInnerHTML`, React Native, PDF generation, canvas, terminal ANSI codes, and so on.
 
 ### `highlightMatch`
 
@@ -138,7 +163,9 @@ input.addEventListener('input', () => {
 });
 ```
 
-### React
+### React — with `matchPositions` (recommended)
+
+Use `matchPositions` to build real React elements — no `dangerouslySetInnerHTML`, no ESLint warnings, works with concurrent mode and React Server Components.
 
 ```jsx
 import { useState } from 'react';
@@ -146,6 +173,25 @@ import AccentFolding from 'accent-folding';
 
 const af = new AccentFolding();
 const names = ['López', 'Müller', 'Björk', 'Ñoño', 'García', 'Renée'];
+
+function Highlight({ text, query }) {
+	const positions = af.matchPositions(text, query);
+	if (!positions.length) return <span>{text}</span>;
+
+	const parts = [];
+	let last = 0;
+	for (const { start, end } of positions) {
+		if (start > last) parts.push(text.slice(last, start));
+		parts.push(
+			<mark key={start} className="bg-yellow-200 rounded px-0.5 font-semibold">
+				{text.slice(start, end)}
+			</mark>
+		);
+		last = end;
+	}
+	parts.push(text.slice(last));
+	return <span>{parts}</span>;
+}
 
 export default function AccentSearch() {
 	const [query, setQuery] = useState('');
@@ -165,12 +211,9 @@ export default function AccentSearch() {
 			/>
 			<ul>
 				{matches.map((name) => (
-					<li
-						key={name}
-						dangerouslySetInnerHTML={{
-							__html: query ? af.highlightMatch(name, query) : name,
-						}}
-					/>
+					<li key={name}>
+						<Highlight text={name} query={query} />
+					</li>
 				))}
 			</ul>
 		</div>
@@ -178,7 +221,40 @@ export default function AccentSearch() {
 }
 ```
 
-`dangerouslySetInnerHTML` is safe here because `names` is app-controlled data. Never use it with strings from untrusted external input.
+### React Native
+
+`highlightMatch` is useless in React Native — there is no DOM. `matchPositions` is the only way to highlight accented text in a native app.
+
+```jsx
+import { Text, StyleSheet } from 'react-native';
+import AccentFolding from 'accent-folding';
+
+const af = new AccentFolding();
+
+function Highlight({ text, query }) {
+	const positions = af.matchPositions(text, query);
+	if (!positions.length) return <Text>{text}</Text>;
+
+	const parts = [];
+	let last = 0;
+	for (const { start, end } of positions) {
+		if (start > last)
+			parts.push(<Text key={`t-${last}`}>{text.slice(last, start)}</Text>);
+		parts.push(
+			<Text key={`h-${start}`} style={styles.highlight}>
+				{text.slice(start, end)}
+			</Text>
+		);
+		last = end;
+	}
+	parts.push(<Text key="tail">{text.slice(last)}</Text>);
+	return <Text>{parts}</Text>;
+}
+
+const styles = StyleSheet.create({
+	highlight: { fontWeight: 'bold', backgroundColor: '#fef08a' },
+});
+```
 
 A full React + TypeScript demo (Vite, typed `AccentMap`, search highlight, custom map showcase) is available in [`demo/`](demo/). Run it with:
 
@@ -235,6 +311,7 @@ accentFoldedHighlight('Fulanilo López', 'lo', 'strong'); // --> "Fulani<strong>
 | --------------------------- | ---------------------------------- | ------------------------------------------------------------------------------- |
 | Status                      | ❌ Archived Nov 2024               | ✅ Actively maintained                                                          |
 | `highlightMatch()`          | ❌ No                              | ✅ Unique — wraps matches in HTML while preserving original accented characters |
+| `matchPositions()`          | ❌ No                              | ✅ Framework-agnostic — works in React, React Native, PDF, canvas, terminal     |
 | NFC/NFD normalization       | ❌ NFD input produces wrong output | ✅ Handles both automatically                                                   |
 | Result caching              | ❌ No                              | ✅ Yes — repeated calls with the same input are cached                          |
 | Test coverage               | ❌ Not reported                    | ✅ 100% line + branch coverage                                                  |

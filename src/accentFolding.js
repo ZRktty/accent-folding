@@ -38,6 +38,48 @@ class AccentFolding {
 		return this.#fold(text);
 	}
 
+	#findMatchPositions(strNFC, fragment) {
+		const offsets = [];
+		let foldedStr = '';
+		for (const char of [...strNFC]) {
+			offsets.push(foldedStr.length);
+			foldedStr += this.#accentMap.get(char) ?? char;
+		}
+		offsets.push(foldedStr.length);
+
+		const escapedFragment = fragment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+		const fragmentFolded = this.#fold(escapedFragment).toLowerCase();
+		const re = new RegExp(fragmentFolded, 'g');
+
+		const positions = [];
+		let lastOriginalIndex = 0;
+
+		foldedStr.toLowerCase().replace(re, (match, foldedIndex) => {
+			const foldedEnd = foldedIndex + match.length;
+			const origStart = offsets.findIndex(
+				(_, i) => offsets[i] <= foldedIndex && foldedIndex < offsets[i + 1]
+			);
+			const origEnd = offsets.findIndex(
+				(_, i) => offsets[i] <= foldedEnd && foldedEnd <= offsets[i + 1]
+			);
+
+			if (origStart < 0 || origEnd < 0 || origStart < lastOriginalIndex) return;
+
+			positions.push({ start: origStart, end: origEnd + 1 });
+			lastOriginalIndex = origEnd + 1;
+		});
+
+		return positions;
+	}
+
+	matchPositions(str, fragment) {
+		if (!fragment) return [];
+		if (typeof str !== 'string' || typeof fragment !== 'string') {
+			throw new TypeError('Both str and fragment must be strings');
+		}
+		return this.#findMatchPositions(str.normalize('NFC'), fragment);
+	}
+
 	highlightMatch(str, fragment, wrapTag = 'b') {
 		try {
 			if (!fragment) return str;
@@ -52,49 +94,19 @@ class AccentFolding {
 			}
 
 			const strNFC = str.normalize('NFC');
+			const positions = this.#findMatchPositions(strNFC, fragment);
 
-			// Build a folded string with an offset table that maps each position
-			// in the folded string back to the corresponding original character index.
-			// This handles multi-character expansions (e.g. ß → ss, æ → ae).
-			const chars = [...strNFC];
-			const offsets = []; // offsets[i] = start position in foldedStr for chars[i]
-			let foldedStr = '';
-			for (const char of chars) {
-				offsets.push(foldedStr.length);
-				foldedStr += this.#accentMap.get(char) ?? char;
-			}
-			offsets.push(foldedStr.length); // sentinel
+			if (!positions.length) return str;
 
-			const escapedFragment = fragment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-			const fragmentFolded = this.#fold(escapedFragment).toLowerCase();
-
-			const re = new RegExp(fragmentFolded, 'g');
 			let result = '';
-			let lastOriginalIndex = 0;
-			let hasMatch = false;
-
-			foldedStr.toLowerCase().replace(re, (match, foldedIndex) => {
-				// Map folded indices back to original character indices.
-				const foldedEnd = foldedIndex + match.length;
-				const origStart = offsets.findIndex(
-					(_, i) => offsets[i] <= foldedIndex && foldedIndex < offsets[i + 1]
-				);
-				const origEnd = offsets.findIndex(
-					(_, i) => offsets[i] <= foldedEnd && foldedEnd <= offsets[i + 1]
-				);
-
-				if (origStart < 0 || origEnd < 0 || origStart < lastOriginalIndex)
-					return;
-
-				hasMatch = true;
-				result += this.#escapeHtml(strNFC.slice(lastOriginalIndex, origStart));
-				result += `<${wrapTag}>${this.#escapeHtml(strNFC.slice(origStart, origEnd + 1))}</${wrapTag}>`;
-				lastOriginalIndex = origEnd + 1;
-			});
-
-			result += this.#escapeHtml(strNFC.slice(lastOriginalIndex));
-
-			return hasMatch ? result : str;
+			let last = 0;
+			for (const { start, end } of positions) {
+				result += this.#escapeHtml(strNFC.slice(last, start));
+				result += `<${wrapTag}>${this.#escapeHtml(strNFC.slice(start, end))}</${wrapTag}>`;
+				last = end;
+			}
+			result += this.#escapeHtml(strNFC.slice(last));
+			return result;
 		} catch (error) {
 			console.error('Error in highlightMatch:', error.message);
 			throw error;

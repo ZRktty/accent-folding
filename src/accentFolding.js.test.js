@@ -9,6 +9,78 @@ describe('AccentFolding', () => {
 		accentFolder = new AccentFolding();
 	});
 
+	describe('matchPositions', () => {
+		it('returns [] for empty fragment', () => {
+			expect(accentFolder.matchPositions('Hello', '')).toEqual([]);
+		});
+
+		it('returns [] when no match', () => {
+			expect(accentFolder.matchPositions('Hello World', 'xyz')).toEqual([]);
+		});
+
+		it('returns [] for empty string', () => {
+			expect(accentFolder.matchPositions('', 'lo')).toEqual([]);
+		});
+
+		it('throws TypeError for non-string inputs', () => {
+			expect(() => accentFolder.matchPositions(123, 'lo')).toThrow(TypeError);
+			expect(() => accentFolder.matchPositions('text', 123)).toThrow(TypeError);
+		});
+
+		it('finds accent-insensitive matches and returns correct positions', () => {
+			expect(accentFolder.matchPositions('Fulanilo López', 'lo')).toEqual([
+				{ start: 6, end: 8 },
+				{ start: 9, end: 11 },
+			]);
+		});
+
+		it('is case insensitive', () => {
+			expect(accentFolder.matchPositions('FULANILO LÓPEZ', 'lo')).toEqual([
+				{ start: 6, end: 8 },
+				{ start: 9, end: 11 },
+			]);
+		});
+
+		it('handles multi-character folding: ß matched by ss', () => {
+			expect(accentFolder.matchPositions('Straße', 'ss')).toEqual([
+				{ start: 4, end: 5 },
+			]);
+		});
+
+		it('handles multi-character folding: æ matched by ae', () => {
+			expect(accentFolder.matchPositions('encyclopædia', 'ae')).toEqual([
+				{ start: 8, end: 9 },
+			]);
+		});
+
+		it('positions slice back to the original matched text', () => {
+			const text = 'Fulanilo López';
+			const positions = accentFolder.matchPositions(text, 'lo');
+			expect(text.slice(positions[0].start, positions[0].end)).toBe('lo');
+			expect(text.slice(positions[1].start, positions[1].end)).toBe('Ló');
+		});
+
+		it('positions slice back the correct text for ß', () => {
+			const text = 'Straße';
+			const [{ start, end }] = accentFolder.matchPositions(text, 'ss');
+			expect(text.slice(start, end)).toBe('ß');
+		});
+
+		it('handles multiple matches', () => {
+			const positions = accentFolder.matchPositions('lólá lòlã', 'la');
+			expect(positions).toEqual([
+				{ start: 2, end: 4 },
+				{ start: 7, end: 9 },
+			]);
+		});
+
+		it('handles special characters in fragment', () => {
+			expect(accentFolder.matchPositions('a+b=c', '+')).toEqual([
+				{ start: 1, end: 2 },
+			]);
+		});
+	});
+
 	describe('highlightMatch', () => {
 		it('should throw TypeError if str is not a string', () => {
 			expect(() => accentFolder.highlightMatch(123, 'test')).toThrow(TypeError);
