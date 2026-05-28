@@ -170,6 +170,34 @@ describe('AccentFolding', () => {
 		});
 	});
 
+	describe('map correctness', () => {
+		it('does not alter ASCII text', () => {
+			expect(accentFolder.replace('Hello World')).toBe('Hello World');
+			expect(accentFolder.replace('JAPAN')).toBe('JAPAN');
+			expect(accentFolder.replace('NORWAY')).toBe('NORWAY');
+			expect(accentFolder.replace('WITTY')).toBe('WITTY');
+		});
+
+		it('folds common accented characters correctly', () => {
+			expect(accentFolder.replace('naïve')).toBe('naive');
+			expect(accentFolder.replace('résumé')).toBe('resume');
+			expect(accentFolder.replace('Ñoño')).toBe('Nono');
+			expect(accentFolder.replace('García')).toBe('Garcia');
+			expect(accentFolder.replace('Müller')).toBe('Muller');
+			expect(accentFolder.replace('Björk')).toBe('Bjork');
+		});
+
+		it('maps Ĺ (U+0139) to L', () => {
+			expect(accentFolder.replace('Ĺ')).toBe('L');
+		});
+
+		it('expands uppercase multi-character ligatures', () => {
+			expect(accentFolder.replace('ẞ')).toBe('SS'); // ẞ → SS (uppercase sharp S)
+			expect(accentFolder.replace('Ǽ')).toBe('AE'); // Ǽ (Æ+acute) → AE
+			expect(accentFolder.replace('ǽ')).toBe('ae'); // ǽ → ae
+		});
+	});
+
 	describe('NFD input handling', () => {
 		it('replace() handles NFD-encoded input identically to NFC', () => {
 			const nfc = 'Ñoño García';
