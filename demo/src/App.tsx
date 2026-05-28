@@ -75,17 +75,14 @@ export default function App() {
 							className="opacity-70 hover:opacity-100 transition-opacity"
 						>
 							<svg
-								viewBox="0 0 18 7"
-								width="40"
-								height="16"
+								viewBox="0 0 24 24"
+								width="20"
+								height="20"
 								aria-label="npm"
 								role="img"
+								fill="#CB3837"
 							>
-								<path fill="#CB3837" d="M0 0h18v7H0z" />
-								<path
-									fill="#fff"
-									d="M3 1H1v5h2V2h1v4h1V1H3zm4 0H5v5h2V2h2v3H8v1h1V1H7zm5 0H9v5h4V1zm-2 1h2v3h-1V2h-1v2h1v1h-1V2zm4-1h2v5h-1V2h-1v4h-1V1h1z"
-								/>
+								<path d="M1.763 0C.786 0 0 .786 0 1.763v20.474C0 23.214.786 24 1.763 24h20.474c.977 0 1.763-.786 1.763-1.763V1.763C24 .786 23.214 0 22.237 0zM5.13 5.323l13.837.019-.009 13.568h-3.94l.01-9.635-5.444-.012-.01 9.648H5.12z" />
 							</svg>
 						</a>
 						<a
