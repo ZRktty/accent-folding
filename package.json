@@ -1,6 +1,6 @@
 {
   "name": "accent-folding",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "description": "Accent-insensitive text matching with built-in search highlighting — the only library that returns original accented text with HTML markup around matches",
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.js",
