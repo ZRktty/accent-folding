@@ -21,6 +21,6 @@ export default [
 		},
 	},
 	{
-		ignores: ['dist/', '.idea', 'coverage/'],
+		ignores: ['dist/', 'demo/dist/', '.idea', 'coverage/'],
 	},
 ];
