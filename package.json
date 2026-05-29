@@ -34,7 +34,7 @@
   "type": "module",
   "sideEffects": false,
   "scripts": {
-    "build": "tsup && cp index.d.ts dist/esm/index.d.ts && cp index.d.ts dist/cjs/index.d.cts",
+    "build": "tsup && node scripts/copy-dts.mjs",
     "coverage": "vitest run --coverage",
     "format": "npx prettier --write .",
     "lint": "eslint .",
