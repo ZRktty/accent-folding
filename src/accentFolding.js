@@ -1,6 +1,4 @@
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const defaultAccentMap = require('./accentMap.json');
+import defaultAccentMap from './accentMap.json' with { type: 'json' };
 
 class AccentFolding {
 	#cache;
@@ -38,13 +36,90 @@ class AccentFolding {
 		return this.#fold(text);
 	}
 
+	#findMatchPositions(strNFC, fragment) {
+		const offsets = []; // code-point index → start position in foldedStr
+		const cpToUnit = []; // code-point index → UTF-16 code unit index in strNFC
+		let foldedStr = '';
+		let unitIndex = 0;
+		for (const char of strNFC) {
+			offsets.push(foldedStr.length);
+			cpToUnit.push(unitIndex);
+			foldedStr += this.#accentMap.get(char) ?? char;
+			unitIndex += char.length;
+		}
+		offsets.push(foldedStr.length);
+		cpToUnit.push(unitIndex);
+
+		const fragmentFolded = this.#fold(fragment).toLowerCase();
+		const escapedFragment = fragmentFolded.replace(
+			/[.*+?^${}()|[\]\\]/g,
+			'\\$&'
+		);
+		const re = new RegExp(escapedFragment, 'g');
+
+		const positions = [];
+		let lastCpIndex = 0;
+
+		foldedStr.toLowerCase().replace(re, (match, foldedIndex) => {
+			const foldedEnd = foldedIndex + match.length;
+			const origStartCp = offsets.findIndex(
+				(_, i) => offsets[i] <= foldedIndex && foldedIndex < offsets[i + 1]
+			);
+			const origEndCp = offsets.findIndex(
+				(_, i) => offsets[i] <= foldedEnd && foldedEnd <= offsets[i + 1]
+			);
+
+			if (origStartCp < 0 || origEndCp < 0 || origStartCp < lastCpIndex) return;
+
+			positions.push({
+				start: cpToUnit[origStartCp],
+				end: cpToUnit[origEndCp + 1],
+			});
+			lastCpIndex = origEndCp + 1;
+		});
+
+		return positions;
+	}
+
+	/**
+	 * Returns the start/end index pairs of every accent-insensitive match of
+	 * `fragment` in `str`. Indices refer to the original string — `end` is
+	 * exclusive, so `str.slice(start, end)` yields the matched substring.
+	 *
+	 * Use this instead of `highlightMatch` whenever you need to own the
+	 * rendering: React elements, React Native `<Text>`, PDF primitives,
+	 * terminal ANSI codes, canvas pixel offsets, etc.
+	 *
+	 * @param {string} str - The string to search in.
+	 * @param {string} fragment - The search query (accent-insensitive, case-insensitive).
+	 * @returns {{ start: number, end: number }[]} Matched ranges, or `[]` when there is no match.
+	 * @throws {TypeError} If either argument is not a string.
+	 *
+	 * @example
+	 * af.matchPositions('Fulanilo López', 'lo')
+	 * // → [{ start: 6, end: 8 }, { start: 9, end: 11 }]
+	 *
+	 * af.matchPositions('Straße', 'ss')
+	 * // → [{ start: 4, end: 5 }]  — ß folds to ss; position maps back to ß
+	 *
+	 * af.matchPositions('Hello World', 'xyz')
+	 * // → []
+	 */
+	matchPositions(str, fragment) {
+		if (typeof str !== 'string' || typeof fragment !== 'string') {
+			throw new TypeError('Both str and fragment must be strings');
+		}
+		if (!fragment) return [];
+		return this.#findMatchPositions(str.normalize('NFC'), fragment);
+	}
+
 	highlightMatch(str, fragment, wrapTag = 'b') {
 		try {
-			if (!fragment) return str;
-
 			if (typeof str !== 'string' || typeof fragment !== 'string') {
 				throw new TypeError('Both str and fragment must be strings');
 			}
+
+			if (!fragment) return str;
 
 			const allowedWrapTags = new Set(['b', 'strong', 'mark', 'span']);
 			if (typeof wrapTag !== 'string' || !allowedWrapTags.has(wrapTag)) {
@@ -52,49 +127,19 @@ class AccentFolding {
 			}
 
 			const strNFC = str.normalize('NFC');
+			const positions = this.#findMatchPositions(strNFC, fragment);
 
-			// Build a folded string with an offset table that maps each position
-			// in the folded string back to the corresponding original character index.
-			// This handles multi-character expansions (e.g. ß → ss, æ → ae).
-			const chars = [...strNFC];
-			const offsets = []; // offsets[i] = start position in foldedStr for chars[i]
-			let foldedStr = '';
-			for (const char of chars) {
-				offsets.push(foldedStr.length);
-				foldedStr += this.#accentMap.get(char) ?? char;
-			}
-			offsets.push(foldedStr.length); // sentinel
+			if (!positions.length) return str;
 
-			const escapedFragment = fragment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-			const fragmentFolded = this.#fold(escapedFragment).toLowerCase();
-
-			const re = new RegExp(fragmentFolded, 'g');
 			let result = '';
-			let lastOriginalIndex = 0;
-			let hasMatch = false;
-
-			foldedStr.toLowerCase().replace(re, (match, foldedIndex) => {
-				// Map folded indices back to original character indices.
-				const foldedEnd = foldedIndex + match.length;
-				const origStart = offsets.findIndex(
-					(_, i) => offsets[i] <= foldedIndex && foldedIndex < offsets[i + 1]
-				);
-				const origEnd = offsets.findIndex(
-					(_, i) => offsets[i] <= foldedEnd && foldedEnd <= offsets[i + 1]
-				);
-
-				if (origStart < 0 || origEnd < 0 || origStart < lastOriginalIndex)
-					return;
-
-				hasMatch = true;
-				result += this.#escapeHtml(strNFC.slice(lastOriginalIndex, origStart));
-				result += `<${wrapTag}>${this.#escapeHtml(strNFC.slice(origStart, origEnd + 1))}</${wrapTag}>`;
-				lastOriginalIndex = origEnd + 1;
-			});
-
-			result += this.#escapeHtml(strNFC.slice(lastOriginalIndex));
-
-			return hasMatch ? result : str;
+			let last = 0;
+			for (const { start, end } of positions) {
+				result += this.#escapeHtml(strNFC.slice(last, start));
+				result += `<${wrapTag}>${this.#escapeHtml(strNFC.slice(start, end))}</${wrapTag}>`;
+				last = end;
+			}
+			result += this.#escapeHtml(strNFC.slice(last));
+			return result;
 		} catch (error) {
 			console.error('Error in highlightMatch:', error.message);
 			throw error;

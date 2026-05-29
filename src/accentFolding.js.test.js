@@ -9,10 +9,110 @@ describe('AccentFolding', () => {
 		accentFolder = new AccentFolding();
 	});
 
+	describe('matchPositions', () => {
+		it('returns [] for empty fragment', () => {
+			expect(accentFolder.matchPositions('Hello', '')).toEqual([]);
+		});
+
+		it('returns [] when no match', () => {
+			expect(accentFolder.matchPositions('Hello World', 'xyz')).toEqual([]);
+		});
+
+		it('returns [] for empty string', () => {
+			expect(accentFolder.matchPositions('', 'lo')).toEqual([]);
+		});
+
+		it('throws TypeError for non-string inputs', () => {
+			expect(() => accentFolder.matchPositions(123, 'lo')).toThrow(TypeError);
+			expect(() => accentFolder.matchPositions('text', 123)).toThrow(TypeError);
+		});
+
+		it('finds accent-insensitive matches and returns correct positions', () => {
+			expect(accentFolder.matchPositions('Fulanilo López', 'lo')).toEqual([
+				{ start: 6, end: 8 },
+				{ start: 9, end: 11 },
+			]);
+		});
+
+		it('is case insensitive', () => {
+			expect(accentFolder.matchPositions('FULANILO LÓPEZ', 'lo')).toEqual([
+				{ start: 6, end: 8 },
+				{ start: 9, end: 11 },
+			]);
+		});
+
+		it('handles multi-character folding: ß matched by ss', () => {
+			expect(accentFolder.matchPositions('Straße', 'ss')).toEqual([
+				{ start: 4, end: 5 },
+			]);
+		});
+
+		it('handles multi-character folding: æ matched by ae', () => {
+			expect(accentFolder.matchPositions('encyclopædia', 'ae')).toEqual([
+				{ start: 8, end: 9 },
+			]);
+		});
+
+		it('positions slice back to the original matched text', () => {
+			const text = 'Fulanilo López';
+			const positions = accentFolder.matchPositions(text, 'lo');
+			expect(text.slice(positions[0].start, positions[0].end)).toBe('lo');
+			expect(text.slice(positions[1].start, positions[1].end)).toBe('Ló');
+		});
+
+		it('positions slice back the correct text for ß', () => {
+			const text = 'Straße';
+			const [{ start, end }] = accentFolder.matchPositions(text, 'ss');
+			expect(text.slice(start, end)).toBe('ß');
+		});
+
+		it('handles multiple matches', () => {
+			const positions = accentFolder.matchPositions('lólá lòlã', 'la');
+			expect(positions).toEqual([
+				{ start: 2, end: 4 },
+				{ start: 7, end: 9 },
+			]);
+		});
+
+		it('handles special characters in fragment', () => {
+			expect(accentFolder.matchPositions('a+b=c', '+')).toEqual([
+				{ start: 1, end: 2 },
+			]);
+		});
+
+		it('does not treat folded regex metacharacters as wildcards in custom accent maps', () => {
+			// ñ folds to '.' in this custom map; escape must happen AFTER folding,
+			// otherwise the dot lands in the regex unescaped and matches any character.
+			const af = new AccentFolding({ ñ: '.' });
+			// 'cat' has no literal dot — should return no match
+			expect(af.matchPositions('cat', 'ñ')).toEqual([]);
+			// Only a real dot should match
+			expect(af.matchPositions('c.t', 'ñ')).toEqual([{ start: 1, end: 2 }]);
+		});
+
+		it('returns UTF-16 code unit indices when surrogate pairs (emoji) precede the match', () => {
+			// '😀' occupies 2 UTF-16 code units (indices 0-1); ' ' is at 2; 'café' spans 3-6
+			// A code-point-based implementation returns {start:2, end:6} → slice gives " caf"
+			const text = '😀 café';
+			const positions = accentFolder.matchPositions(text, 'cafe');
+			expect(positions).toEqual([{ start: 3, end: 7 }]);
+			expect(text.slice(positions[0].start, positions[0].end)).toBe('café');
+		});
+	});
+
 	describe('highlightMatch', () => {
 		it('should throw TypeError if str is not a string', () => {
 			expect(() => accentFolder.highlightMatch(123, 'test')).toThrow(TypeError);
 			expect(() => accentFolder.highlightMatch(123, 'test')).toThrow(
+				'Both str and fragment must be strings'
+			);
+		});
+
+		it('throws TypeError for non-string str even when fragment is empty', () => {
+			// falsy-fragment guard must not run before type validation —
+			// highlightMatch(123, '') should throw, not return 123
+			expect(() => accentFolder.highlightMatch(123, '')).toThrow(TypeError);
+			expect(() => accentFolder.highlightMatch(123, '')).toThrow(
 				'Both str and fragment must be strings'
 			);
 		});
@@ -143,8 +243,8 @@ describe('AccentFolding', () => {
 			expect(accentFolder.replace('HIJNTPSWJ')).toBe('HIJNTPSWJ');
 		});
 
-		it('should replace Ĺ with l (regression: mapping typo prevention)', () => {
-			expect(accentFolder.replace('Ĺukasz')).toBe('lukasz');
+		it('should replace Ĺ with L (regression: mapping typo prevention)', () => {
+			expect(accentFolder.replace('Ĺukasz')).toBe('Lukasz');
 		});
 
 		it('should handle empty string', () => {
@@ -164,9 +264,37 @@ describe('AccentFolding', () => {
 				expect(accentFolder.replace('cœur')).toBe('coeur');
 			});
 
-			it('replaces Þ with th (Icelandic thorn)', () => {
-				expect(accentFolder.replace('Þór')).toBe('thor');
+			it('replaces Þ with TH (Icelandic thorn, uppercase)', () => {
+				expect(accentFolder.replace('Þór')).toBe('THor');
 			});
+		});
+	});
+
+	describe('map correctness', () => {
+		it('does not alter ASCII text', () => {
+			expect(accentFolder.replace('Hello World')).toBe('Hello World');
+			expect(accentFolder.replace('JAPAN')).toBe('JAPAN');
+			expect(accentFolder.replace('NORWAY')).toBe('NORWAY');
+			expect(accentFolder.replace('WITTY')).toBe('WITTY');
+		});
+
+		it('folds common accented characters correctly', () => {
+			expect(accentFolder.replace('naïve')).toBe('naive');
+			expect(accentFolder.replace('résumé')).toBe('resume');
+			expect(accentFolder.replace('Ñoño')).toBe('Nono');
+			expect(accentFolder.replace('García')).toBe('Garcia');
+			expect(accentFolder.replace('Müller')).toBe('Muller');
+			expect(accentFolder.replace('Björk')).toBe('Bjork');
+		});
+
+		it('maps Ĺ (U+0139) to L', () => {
+			expect(accentFolder.replace('Ĺ')).toBe('L');
+		});
+
+		it('expands uppercase multi-character ligatures', () => {
+			expect(accentFolder.replace('ẞ')).toBe('SS'); // ẞ → SS (uppercase sharp S)
+			expect(accentFolder.replace('Ǽ')).toBe('AE'); // Ǽ (Æ+acute) → AE
+			expect(accentFolder.replace('ǽ')).toBe('ae'); // ǽ → ae
 		});
 	});
 
@@ -175,7 +303,7 @@ describe('AccentFolding', () => {
 			const nfc = 'Ñoño García';
 			const nfd = nfc.normalize('NFD');
 			expect(accentFolder.replace(nfd)).toBe(accentFolder.replace(nfc));
-			expect(accentFolder.replace(nfd)).toBe('nono Garcia');
+			expect(accentFolder.replace(nfd)).toBe('Nono Garcia');
 		});
 
 		it('highlightMatch() handles NFD input correctly', () => {
