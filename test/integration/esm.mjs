@@ -24,7 +24,10 @@ const af = new AccentFolding();
 // --- replace ---
 assert('replace: strips accent', af.replace('café') === 'cafe');
 assert('replace: preserves ASCII', af.replace('hello') === 'hello');
-assert('replace: multi-char mapping (ß→ss)', af.replace('Straße') === 'Strasse');
+assert(
+	'replace: multi-char mapping (ß→ss)',
+	af.replace('Straße') === 'Strasse'
+);
 
 // --- highlightMatch ---
 assert(
@@ -43,12 +46,18 @@ assert(
 // --- matchPositions ---
 const positions = af.matchPositions('Fulanilo López', 'lo');
 assert('matchPositions: finds two matches', positions.length === 2);
-assert('matchPositions: start/end are numbers', typeof positions[0].start === 'number');
+assert(
+	'matchPositions: start/end are numbers',
+	typeof positions[0].start === 'number'
+);
 assert(
 	'matchPositions: slices back to original text',
 	'Fulanilo López'.slice(positions[1].start, positions[1].end) === 'Ló'
 );
-assert('matchPositions: empty fragment → []', af.matchPositions('hello', '').length === 0);
+assert(
+	'matchPositions: empty fragment → []',
+	af.matchPositions('hello', '').length === 0
+);
 
 // --- custom map ---
 const afCustom = new AccentFolding({ ö: 'oe' });
@@ -56,7 +65,10 @@ assert('custom map: override works', afCustom.replace('Föhn') === 'Foehn');
 
 // --- static method ---
 const entries = AccentFolding.convertAccentMapToArray({ á: 'a', ñ: 'n' });
-assert('convertAccentMapToArray returns pairs', entries.length === 2 && entries[0][0] === 'á');
+assert(
+	'convertAccentMapToArray returns pairs',
+	entries.length === 2 && entries[0][0] === 'á'
+);
 
 // --- result ---
 if (failed > 0) {
