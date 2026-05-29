@@ -115,11 +115,11 @@ class AccentFolding {
 
 	highlightMatch(str, fragment, wrapTag = 'b') {
 		try {
-			if (!fragment) return str;
-
 			if (typeof str !== 'string' || typeof fragment !== 'string') {
 				throw new TypeError('Both str and fragment must be strings');
 			}
+
+			if (!fragment) return str;
 
 			const allowedWrapTags = new Set(['b', 'strong', 'mark', 'span']);
 			if (typeof wrapTag !== 'string' || !allowedWrapTags.has(wrapTag)) {

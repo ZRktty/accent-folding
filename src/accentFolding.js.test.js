@@ -108,6 +108,15 @@ describe('AccentFolding', () => {
 			);
 		});
 
+		it('throws TypeError for non-string str even when fragment is empty', () => {
+			// falsy-fragment guard must not run before type validation —
+			// highlightMatch(123, '') should throw, not return 123
+			expect(() => accentFolder.highlightMatch(123, '')).toThrow(TypeError);
+			expect(() => accentFolder.highlightMatch(123, '')).toThrow(
+				'Both str and fragment must be strings'
+			);
+		});
+
 		it('should throw TypeError if fragment is not a string', () => {
 			expect(() => accentFolder.highlightMatch('test', 123)).toThrow(TypeError);
 			expect(() => accentFolder.highlightMatch('test', 123)).toThrow(
