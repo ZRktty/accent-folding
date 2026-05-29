@@ -50,9 +50,12 @@ class AccentFolding {
 		offsets.push(foldedStr.length);
 		cpToUnit.push(unitIndex);
 
-		const escapedFragment = fragment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-		const fragmentFolded = this.#fold(escapedFragment).toLowerCase();
-		const re = new RegExp(fragmentFolded, 'g');
+		const fragmentFolded = this.#fold(fragment).toLowerCase();
+		const escapedFragment = fragmentFolded.replace(
+			/[.*+?^${}()|[\]\\]/g,
+			'\\$&'
+		);
+		const re = new RegExp(escapedFragment, 'g');
 
 		const positions = [];
 		let lastCpIndex = 0;

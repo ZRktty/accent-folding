@@ -80,6 +80,16 @@ describe('AccentFolding', () => {
 			]);
 		});
 
+		it('does not treat folded regex metacharacters as wildcards in custom accent maps', () => {
+			// ñ folds to '.' in this custom map; escape must happen AFTER folding,
+			// otherwise the dot lands in the regex unescaped and matches any character.
+			const af = new AccentFolding({ ñ: '.' });
+			// 'cat' has no literal dot — should return no match
+			expect(af.matchPositions('cat', 'ñ')).toEqual([]);
+			// Only a real dot should match
+			expect(af.matchPositions('c.t', 'ñ')).toEqual([{ start: 1, end: 2 }]);
+		});
+
 		it('returns UTF-16 code unit indices when surrogate pairs (emoji) precede the match', () => {
 			// '😀' occupies 2 UTF-16 code units (indices 0-1); ' ' is at 2; 'café' spans 3-6
 			// A code-point-based implementation returns {start:2, end:6} → slice gives " caf"
