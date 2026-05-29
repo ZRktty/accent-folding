@@ -6,3 +6,4 @@ coverage/
 .claude/
 demo/dist/
 package-lock.json
+dist/

@@ -1,4 +1,7 @@
-import AccentFolding, { type AccentMap } from './index.js';
+import AccentFolding, {
+	type AccentMap,
+	type MatchPosition,
+} from 'accent-folding';
 
 // Constructor variants
 const af = new AccentFolding();
@@ -12,6 +15,9 @@ const replaced: string = af.replace('café');
 // highlightMatch() — two-arg and three-arg forms
 const highlighted: string = af.highlightMatch('López', 'lo');
 const highlightedTagged: string = af.highlightMatch('López', 'lo', 'mark');
+
+// matchPositions() returns MatchPosition[]
+const positions: MatchPosition[] = af.matchPositions('López', 'lo');
 
 // static method
 const entries: Array<[string, string]> =
@@ -33,5 +39,6 @@ af.highlightMatch('café', 42);
 	replaced,
 	highlighted,
 	highlightedTagged,
+	positions,
 	entries,
 	afMy);

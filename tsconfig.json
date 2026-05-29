@@ -4,7 +4,10 @@
     "noEmit": true,
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "target": "ES2022"
+    "target": "ES2022",
+    "paths": {
+      "accent-folding": ["./index.d.ts"]
+    }
   },
   "include": ["test-types.ts"]
 }

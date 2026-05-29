@@ -2,17 +2,23 @@
   "name": "accent-folding",
   "version": "2.6.0",
   "description": "Accent-insensitive text matching with built-in search highlighting — the only library that returns original accented text with HTML markup around matches",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
-      "default": "./index.js"
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.cts",
+        "default": "./dist/cjs/index.cjs"
+      }
     }
   },
   "files": [
-    "index.js",
-    "index.d.ts",
+    "dist/",
     "src/"
   ],
   "engines": {
@@ -26,13 +32,16 @@
     }
   },
   "type": "module",
+  "sideEffects": false,
   "scripts": {
+    "build": "tsup && cp index.d.ts dist/esm/index.d.ts && cp index.d.ts dist/cjs/index.d.cts",
     "coverage": "vitest run --coverage",
     "format": "npx prettier --write .",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "semantic-release": "semantic-release",
     "test": "vitest",
+    "test:integration": "node test/integration/esm.mjs && node test/integration/cjs.cjs",
     "type-check": "tsc",
     "docs": "pnpm dlx serve docs",
     "prepare": "husky",
@@ -48,12 +57,16 @@
   },
   "size-limit": [
     {
-      "path": "index.js",
+      "name": "ESM",
+      "path": "dist/esm/index.js",
       "limit": "4 kB",
-      "brotli": true,
-      "ignore": [
-        "module"
-      ]
+      "brotli": true
+    },
+    {
+      "name": "CJS",
+      "path": "dist/cjs/index.cjs",
+      "limit": "4 kB",
+      "brotli": true
     }
   ],
   "repository": {
@@ -112,6 +125,7 @@
     "publint": "^0.3.21",
     "semantic-release": "^25.0.3",
     "size-limit": "^12.1.0",
+    "tsup": "^8.5.1",
     "typescript": "^5.8.3",
     "vitest": "^4.1.7"
   }
