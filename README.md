@@ -4,7 +4,7 @@
 
 Searching "cafe" should find "café". Highlighting "lo" in "López" should show `<b>Ló</b>pez` — not stripped text.
 
-`accent-folding` is the only library that solves both: accent-insensitive matching that returns the **original accented string** with HTML markup around matches — or raw index positions for React, React Native, PDF, canvas, and any environment where HTML strings don't belong. Zero dependencies. 2.7 kB gzipped.
+`accent-folding` is the only library that solves both: accent-insensitive matching that returns the **original accented string** with HTML markup around matches — or raw index positions for React, React Native, PDF, canvas, and any environment where HTML strings don't belong. Zero dependencies. ~2.4 kB gzipped. Ships as **dual ESM + CJS** — works in Node ESM, CommonJS, Jest (no transform config), Next.js pages router, and any bundler.
 
 ## Installation
 
@@ -30,6 +30,26 @@ or with yarn:
 
 ```shell
 yarn add accent-folding
+```
+
+## Module formats
+
+The package ships as a **dual ESM + CJS** build. No configuration needed — your toolchain picks the right format automatically:
+
+| Environment                                              | Format used                |
+| -------------------------------------------------------- | -------------------------- |
+| `import` / bundlers (Vite, webpack, Rollup)              | ESM (`dist/esm/index.js`)  |
+| `require()` / Jest (no transform) / Next.js pages router | CJS (`dist/cjs/index.cjs`) |
+
+```js
+// ESM
+import AccentFolding from 'accent-folding';
+
+// CommonJS
+const AccentFolding = require('accent-folding');
+
+const af = new AccentFolding();
+console.log(af.replace('café')); // → 'cafe'
 ```
 
 ## TypeScript
@@ -137,6 +157,24 @@ console.log(accentFolder.replace('✝illa')); // Outputs: tilla
 ```
 
 ## Real-World Examples
+
+### CommonJS (Jest, Next.js pages router)
+
+```js
+const AccentFolding = require('accent-folding');
+
+const af = new AccentFolding();
+const names = ['López', 'Müller', 'Björk', 'Ñoño'];
+
+// Filter and highlight — identical API to ESM
+const results = names
+	.filter((name) =>
+		af.replace(name).toLowerCase().includes(af.replace('lo').toLowerCase())
+	)
+	.map((name) => af.highlightMatch(name, 'lo'));
+
+console.log(results); // ['<b>Ló</b>pez']
+```
 
 ### Plain JS (browser)
 
@@ -267,9 +305,11 @@ cd demo && pnpm dev
 Node.js ≥18
 
 <details>
-<summary>Legacy usage (v1 CommonJS API)</summary>
+<summary>Legacy usage (v1 CommonJS API — accent-folding@1)</summary>
 
-Install with npm:
+v1 exported a single function (no class). If you need `require()` support with the **current** API, see the [Module formats](#module-formats) section above — v2+ ships dual ESM + CJS natively.
+
+Install v1:
 
 ```shell
 npm install accent-folding@1

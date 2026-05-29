@@ -15,4 +15,4 @@
 
 - [x] Add TypeScript support
 - [ ] Add `attw` (`@arethetypeswrong/cli`) validation — blocked by upstream [fflate@0.8.3 crash](https://github.com/arethetypeswrong/arethetypeswrong.github.io/issues/262), revisit once a patched release ships
-- [ ] Add support for CommonJS
+- [x] Add support for CommonJS — dual ESM + CJS build via tsup; `require('accent-folding')` works in Jest, Next.js pages router, and any CJS toolchain
