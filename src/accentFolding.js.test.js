@@ -79,6 +79,15 @@ describe('AccentFolding', () => {
 				{ start: 1, end: 2 },
 			]);
 		});
+
+		it('returns UTF-16 code unit indices when surrogate pairs (emoji) precede the match', () => {
+			// '😀' occupies 2 UTF-16 code units (indices 0-1); ' ' is at 2; 'café' spans 3-6
+			// A code-point-based implementation returns {start:2, end:6} → slice gives " caf"
+			const text = '😀 café';
+			const positions = accentFolder.matchPositions(text, 'cafe');
+			expect(positions).toEqual([{ start: 3, end: 7 }]);
+			expect(text.slice(positions[0].start, positions[0].end)).toBe('café');
+		});
 	});
 
 	describe('highlightMatch', () => {

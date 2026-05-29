@@ -37,34 +37,42 @@ class AccentFolding {
 	}
 
 	#findMatchPositions(strNFC, fragment) {
-		const offsets = [];
+		const offsets = []; // code-point index → start position in foldedStr
+		const cpToUnit = []; // code-point index → UTF-16 code unit index in strNFC
 		let foldedStr = '';
-		for (const char of [...strNFC]) {
+		let unitIndex = 0;
+		for (const char of strNFC) {
 			offsets.push(foldedStr.length);
+			cpToUnit.push(unitIndex);
 			foldedStr += this.#accentMap.get(char) ?? char;
+			unitIndex += char.length;
 		}
 		offsets.push(foldedStr.length);
+		cpToUnit.push(unitIndex);
 
 		const escapedFragment = fragment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 		const fragmentFolded = this.#fold(escapedFragment).toLowerCase();
 		const re = new RegExp(fragmentFolded, 'g');
 
 		const positions = [];
-		let lastOriginalIndex = 0;
+		let lastCpIndex = 0;
 
 		foldedStr.toLowerCase().replace(re, (match, foldedIndex) => {
 			const foldedEnd = foldedIndex + match.length;
-			const origStart = offsets.findIndex(
+			const origStartCp = offsets.findIndex(
 				(_, i) => offsets[i] <= foldedIndex && foldedIndex < offsets[i + 1]
 			);
-			const origEnd = offsets.findIndex(
+			const origEndCp = offsets.findIndex(
 				(_, i) => offsets[i] <= foldedEnd && foldedEnd <= offsets[i + 1]
 			);
 
-			if (origStart < 0 || origEnd < 0 || origStart < lastOriginalIndex) return;
+			if (origStartCp < 0 || origEndCp < 0 || origStartCp < lastCpIndex) return;
 
-			positions.push({ start: origStart, end: origEnd + 1 });
-			lastOriginalIndex = origEnd + 1;
+			positions.push({
+				start: cpToUnit[origStartCp],
+				end: cpToUnit[origEndCp + 1],
+			});
+			lastCpIndex = origEndCp + 1;
 		});
 
 		return positions;
