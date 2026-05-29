@@ -95,10 +95,10 @@ class AccentFolding {
 	 * // → []
 	 */
 	matchPositions(str, fragment) {
-		if (!fragment) return [];
 		if (typeof str !== 'string' || typeof fragment !== 'string') {
 			throw new TypeError('Both str and fragment must be strings');
 		}
+		if (!fragment) return [];
 		return this.#findMatchPositions(str.normalize('NFC'), fragment);
 	}
 
