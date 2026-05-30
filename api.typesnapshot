@@ -2,5 +2,5 @@
 // typescript 5.9.3
 
 type-alias AccentMap: { [x: string]: string; }
-interface MatchPosition: MatchPosition
-class default: typeof AccentFolding
+interface MatchPosition: { end: number; start: number }
+class default: { highlightMatch: (str: string, fragment: string, wrapTag?: string | undefined) => string; matchPositions: (str: string, fragment: string) => Array<MatchPosition>; replace: (text: string) => string }

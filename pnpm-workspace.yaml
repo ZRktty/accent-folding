@@ -7,3 +7,4 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - typesnapshot@0.1.1
+  - typesnapshot@0.1.2
