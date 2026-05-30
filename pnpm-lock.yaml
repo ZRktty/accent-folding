@@ -53,6 +53,9 @@ importers:
       typescript:
         specifier: ^5.8.3
         version: 5.9.3
+      typesnapshot:
+        specifier: ^0.1.1
+        version: 0.1.1(typescript@5.9.3)
       vitest:
         specifier: ^4.1.7
         version: 4.1.7(@vitest/coverage-v8@4.1.7)(vite@7.3.3(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.9.0))
@@ -2895,6 +2898,13 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  typesnapshot@0.1.1:
+    resolution: {integrity: sha512-p9fKcnxgqpGiwJIseY4Yio0SzfjrgA+4ZJT9I1/5U9+EidFXpcAeXfFDaKHwntaUpgAbywyUfFOtMRNekW/aoA==}
+    engines: {node: '>=18'}
+    hasBin: true
+    peerDependencies:
+      typescript: '>=4.7'
+
   ufo@1.6.4:
     resolution: {integrity: sha512-JFNbkD1Svwe0KvGi8GOeLcP4kAWQ609twvCdcHxq1oSL8svv39ZuSvajcD8B+5D0eL4+s1Is2D/O6KN3qcTeRA==}
 
@@ -5641,6 +5651,10 @@ snapshots:
       tagged-tag: 1.0.0
 
   typescript@5.9.3: {}
+
+  typesnapshot@0.1.1(typescript@5.9.3):
+    dependencies:
+      typescript: 5.9.3
 
   ufo@1.6.4: {}
 

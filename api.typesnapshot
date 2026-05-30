@@ -1,0 +1,6 @@
+// @typesnapshot v1
+// typescript 5.9.3
+
+type-alias AccentMap: { [x: string]: string; }
+interface MatchPosition: MatchPosition
+class default: typeof AccentFolding
