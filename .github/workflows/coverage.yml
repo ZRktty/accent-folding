@@ -40,6 +40,9 @@ jobs:
       - name: Check bundle size
         run: pnpm run size
 
+      - name: Check public API surface
+        run: pnpm run type-snapshot
+
       - name: Run tests with coverage
         run: pnpm run coverage
 

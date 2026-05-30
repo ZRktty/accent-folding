@@ -7,3 +7,4 @@ coverage/
 demo/dist/
 package-lock.json
 dist/
+typesnapshot-findings2.md
